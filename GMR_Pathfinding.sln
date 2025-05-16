@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GMR_Pathfinding", "GMR_Pathfinding\GMR_Pathfinding.csproj", "{D5C53000-8265-4322-A507-2DF231BBF94B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D5C53000-8265-4322-A507-2DF231BBF94B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5C53000-8265-4322-A507-2DF231BBF94B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5C53000-8265-4322-A507-2DF231BBF94B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5C53000-8265-4322-A507-2DF231BBF94B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D11DADF6-37D3-4E53-9EA7-17E793D6CF19}
+	EndGlobalSection
+EndGlobal
