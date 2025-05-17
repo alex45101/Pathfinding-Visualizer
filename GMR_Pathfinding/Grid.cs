@@ -14,6 +14,7 @@ namespace GMR_Pathfinding
 
         Cell[] cells;
 
+
         public Grid(int width, int height, int cellSize) 
         { 
             Width = width;
