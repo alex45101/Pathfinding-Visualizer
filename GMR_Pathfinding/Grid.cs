@@ -11,35 +11,38 @@ namespace GMR_Pathfinding
         public int Width { get; private set; }
         public int Height { get; private set; }
         public int CellSize { get; private set; }
+        public int Thickness { get; private set; }
 
-        Vertex<Cell>[] cells;
+        Vertex<Cell> startPoint;
+        Vertex<Cell> endPoint;
+
         Graph<Cell> graph;
+        Vertex<Cell>[] cells;
 
-        public Grid(int width, int height, int cellSize) 
+        public Grid(int width, int height, int cellSize, int thickness) 
         { 
             Width = width;
             Height = height;
             CellSize = cellSize;
+            Thickness = thickness;
 
             CreateCells();
         }
 
         private void CreateCells()
         {
-            cells = new Vertex<Cell>[Width * Height];
             graph = new Graph<Cell>();
 
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    //(x, y)
-                    int index = y * Width + x;
-                    cells[index] = new Vertex<Cell>(new Cell(new Point(x * CellSize, y * CellSize), CellSize, 5));
-
-                    graph.AddVertex(cells[index]);
+                    graph.AddVertex(new Vertex<Cell>(new Cell(new Point(x * CellSize, y * CellSize), CellSize, Thickness)));
                 }
             }
+
+            //have a quick reference to the vertices in an array format
+            cells = graph.Vertices.ToArray();
 
             for (int y = 0; y < Height; y++)
             {
@@ -70,7 +73,17 @@ namespace GMR_Pathfinding
                 }
             }
 
-            cells[0].Value.FillColor = Color.Green;
+            //setup start point
+            startPoint = cells[0];
+            endPoint = cells[cells.Length - 1];
+
+            startPoint.Value.FillColor = Color.Green;
+            endPoint.Value.FillColor = Color.Red;
+        }
+
+        public void Update()
+        { 
+        
         }
 
         public void Draw(Graphics gfx)

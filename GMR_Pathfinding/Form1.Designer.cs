@@ -38,11 +38,13 @@
             // 
             pictureBox1.Dock = DockStyle.Fill;
             pictureBox1.Location = new Point(0, 0);
+            pictureBox1.Margin = new Padding(2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1351, 878);
+            pictureBox1.Size = new Size(831, 549);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             pictureBox1.MouseDown += pictureBox1_MouseDown;
+            pictureBox1.MouseMove += pictureBox1_MouseMove;
             // 
             // timer1
             // 
@@ -51,10 +53,11 @@
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1351, 878);
+            ClientSize = new Size(831, 549);
             Controls.Add(pictureBox1);
+            Margin = new Padding(2);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
