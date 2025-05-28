@@ -16,6 +16,8 @@ namespace GMR_Pathfinding
         Vertex<Cell> startPoint;
         Vertex<Cell> endPoint;
 
+        
+
         Graph<Cell> graph;
         Vertex<Cell>[] cells;
 
@@ -33,6 +35,7 @@ namespace GMR_Pathfinding
         {
             graph = new Graph<Cell>();
 
+            //create vertices
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
@@ -44,6 +47,7 @@ namespace GMR_Pathfinding
             //have a quick reference to the vertices in an array format
             cells = graph.Vertices.ToArray();
 
+            //create edge connections
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
@@ -81,7 +85,7 @@ namespace GMR_Pathfinding
             endPoint.Value.FillColor = Color.Red;
         }
 
-        public void Update()
+        public void Update(bool mouseClick, Color selectedColor)
         { 
         
         }
