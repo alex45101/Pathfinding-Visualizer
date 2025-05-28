@@ -12,8 +12,8 @@ namespace GMR_Pathfinding
         public int Height { get; private set; }
         public int CellSize { get; private set; }
 
-        Cell[] cells;
-
+        Vertex<Cell>[] cells;
+        Graph<Cell> graph;
 
         public Grid(int width, int height, int cellSize) 
         { 
@@ -26,25 +26,58 @@ namespace GMR_Pathfinding
 
         private void CreateCells()
         {
-            cells = new Cell[Width * Height];
+            cells = new Vertex<Cell>[Width * Height];
+            graph = new Graph<Cell>();
 
-            int index = 0;
-            for (int i = 0; i < Height; i++)
+            for (int y = 0; y < Height; y++)
             {
-                for (int j = 0; j < Width; j++, index++)
+                for (int x = 0; x < Width; x++)
                 {
-                    cells[index] = new Cell(new Point(j * CellSize, i * CellSize), CellSize, 5);
+                    //(x, y)
+                    int index = y * Width + x;
+                    cells[index] = new Vertex<Cell>(new Cell(new Point(x * CellSize, y * CellSize), CellSize, 5));
+
+                    graph.AddVertex(cells[index]);
                 }
             }
 
-            cells[0].FillColor = Color.Green;
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    int index = y * Width + x;
+
+                    //above curr cell
+                    if (y > 0)
+                    {
+                        graph.AddEdge(cells[index], cells[(y - 1) * Width + x], 1);
+                    }
+                    //left curr cell
+                    if (x > 0)
+                    {
+                        graph.AddEdge(cells[index], cells[y * Width + (x - 1)], 1);
+                    }
+                    //right curr cell
+                    if (x < Width - 1)
+                    {
+                        graph.AddEdge(cells[index], cells[y * Width + (x + 1)], 1);
+                    }
+                    //below curr cell
+                    if (y < Height - 1)
+                    {
+                        graph.AddEdge(cells[index], cells[(y + 1) * Width + x], 1);
+                    }
+                }
+            }
+
+            cells[0].Value.FillColor = Color.Green;
         }
 
         public void Draw(Graphics gfx)
         {
             for (int i = 0; i < cells.Length; i++)
             {
-                cells[i].Draw(gfx);
+                cells[i].Value.Draw(gfx);
             }
         }
     }

@@ -26,6 +26,10 @@ namespace GMR_Pathfinding
         {
             gfx.Clear(BackColor);
 
+            //update
+
+
+            //draw
             grid.Draw(gfx);
 
             pictureBox1.Image = bitmap;
