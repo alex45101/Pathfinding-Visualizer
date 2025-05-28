@@ -21,7 +21,7 @@ namespace GMR_Pathfinding
         Grid grid;
        
         private void Form1_Load(object sender, EventArgs e)
-        {
+        {            
             bitmap = new Bitmap(GridSize * cellSize + thickness * 2, GridSize * cellSize + thickness * 2);
             gfx = Graphics.FromImage(bitmap);
 
@@ -33,11 +33,11 @@ namespace GMR_Pathfinding
         private void timer1_Tick(object sender, EventArgs e)
         {
             gfx.Clear(BackColor);
+
             //update
             this.Text = $"X:{mousePos.X}, Y:{mousePos.Y}, Color: {selectedColor}";
 
             grid.Update(mouseDown, mousePos, selectedColor, bitmap.Size);
-
 
             //draw
             grid.Draw(gfx);

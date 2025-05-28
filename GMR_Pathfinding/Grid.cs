@@ -13,9 +13,11 @@ namespace GMR_Pathfinding
         public int CellSize { get; private set; }
         public int Thickness { get; private set; }        
 
+        //TODO fix
+        //need to maintain walls too
         Vertex<Cell> startPoint;
         Vertex<Cell> endPoint;
-
+        
         Color startColor = Color.Green;
         Color endColor = Color.Red;
 
@@ -36,20 +38,30 @@ namespace GMR_Pathfinding
         {
             if (mouseDown)
             {
+                //TODO Fix mouse movement
                 int index = GetIndex(
                     (int)(mousePos.X * (float)Form1.GridSize / imageSize.Width),
                     (int)(mousePos.Y * (float)Form1.GridSize / imageSize.Height)
                 );
 
+             
+              
+
                 //moving start point
                 if (selectedColor.R == startColor.R && selectedColor.G == startColor.G && selectedColor.B == startColor.B)
-                {                   
+                {
+                    //debug
+                    Console.WriteLine(index);
                     SetStartPoint(index);
                 }
                 //moving end point
                 else if (selectedColor.R == endColor.R && selectedColor.G == endColor.G && selectedColor.B == endColor.B)
-                { 
+                {
                     SetEndPoint(index);
+                }
+                else
+                { 
+                    //wall logic
                 }
             }
         }
