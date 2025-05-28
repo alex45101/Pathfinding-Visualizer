@@ -7,11 +7,11 @@ namespace GMR_Pathfinding
             InitializeComponent();
         }
 
-        readonly int GridSize = 15;
+        public static readonly int GridSize = 15;
         readonly int cellSize = 30;
         readonly int thickness = 5;
 
-        bool mouseClick = false;
+        bool mouseDown = false;
         Point mousePos = new Point();
         Color selectedColor = Color.Black;
 
@@ -36,7 +36,7 @@ namespace GMR_Pathfinding
             //update
             this.Text = $"X:{mousePos.X}, Y:{mousePos.Y}, Color: {selectedColor}";
 
-            //grid.Update();
+            grid.Update(mouseDown, mousePos, selectedColor, bitmap.Size);
 
 
             //draw
@@ -52,14 +52,14 @@ namespace GMR_Pathfinding
         {
             if (e.Button == MouseButtons.Left)
             {
-                mouseClick = true;
+                mouseDown = true;
             }
         }
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                mouseClick = false;
+                mouseDown = false;
             }
         }
 

@@ -11,12 +11,13 @@ namespace GMR_Pathfinding
         public int Width { get; private set; }
         public int Height { get; private set; }
         public int CellSize { get; private set; }
-        public int Thickness { get; private set; }
+        public int Thickness { get; private set; }        
 
         Vertex<Cell> startPoint;
         Vertex<Cell> endPoint;
 
-        
+        Color startColor = Color.Green;
+        Color endColor = Color.Red;
 
         Graph<Cell> graph;
         Vertex<Cell>[] cells;
@@ -29,6 +30,41 @@ namespace GMR_Pathfinding
             Thickness = thickness;
 
             CreateCells();
+        }
+
+        public void Update(bool mouseDown, Point mousePos, Color selectedColor, Size imageSize)
+        {
+            if (mouseDown)
+            {
+                int index = GetIndex(
+                    (int)(mousePos.X * (float)Form1.GridSize / imageSize.Width),
+                    (int)(mousePos.Y * (float)Form1.GridSize / imageSize.Height)
+                );
+
+                //moving start point
+                if (selectedColor.R == startColor.R && selectedColor.G == startColor.G && selectedColor.B == startColor.B)
+                {                   
+                    SetStartPoint(index);
+                }
+                //moving end point
+                else if (selectedColor.R == endColor.R && selectedColor.G == endColor.G && selectedColor.B == endColor.B)
+                { 
+                    SetEndPoint(index);
+                }
+            }
+        }
+
+        public void Draw(Graphics gfx)
+        {
+            for (int i = 0; i < cells.Length; i++)
+            {
+                cells[i].Value.Draw(gfx);
+            }
+        }
+
+        private int GetIndex(int x, int y)
+        {
+            return y * Width + x;
         }
 
         private void CreateCells()
@@ -52,7 +88,8 @@ namespace GMR_Pathfinding
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    int index = y * Width + x;
+                    //(x, y)
+                    int index = GetIndex(x, y);
 
                     //above curr cell
                     if (y > 0)
@@ -78,24 +115,31 @@ namespace GMR_Pathfinding
             }
 
             //setup start point
-            startPoint = cells[0];
-            endPoint = cells[cells.Length - 1];
-
-            startPoint.Value.FillColor = Color.Green;
-            endPoint.Value.FillColor = Color.Red;
+            SetStartPoint(0);
+            SetEndPoint(cells.Length - 1);            
         }
 
-        public void Update(bool mouseClick, Color selectedColor)
-        { 
-        
-        }
-
-        public void Draw(Graphics gfx)
+        private void SetStartPoint(int index)
         {
-            for (int i = 0; i < cells.Length; i++)
+            if (startPoint != null)
             {
-                cells[i].Value.Draw(gfx);
+                startPoint.Value.FillColor = Color.White;
             }
+
+            startPoint = cells[index];
+            startPoint.Value.FillColor = startColor;
         }
+
+        private void SetEndPoint(int index)
+        {
+            if (endPoint != null)
+            {
+                endPoint.Value.FillColor = Color.White;
+            }
+
+            endPoint = cells[index];
+            endPoint.Value.FillColor = endColor;
+        }
+       
     }
 }
