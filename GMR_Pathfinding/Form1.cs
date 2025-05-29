@@ -12,6 +12,7 @@ namespace GMR_Pathfinding
         readonly int thickness = 3;
 
         bool mouseDown = false;
+        bool prevMouseDown = false;
         Point mousePos = new Point();
         Color selectedColor = Color.Black;
 
@@ -39,7 +40,7 @@ namespace GMR_Pathfinding
             //update
             this.Text = $"Clicks: {tempClicks} X:{mousePos.X}, Y:{mousePos.Y}, Color: {selectedColor}";
 
-            grid.Update(mouseDown, mousePos, selectedColor, bitmap.Size);
+            grid.Update(mouseDown, prevMouseDown, mousePos, selectedColor, bitmap.Size);
 
             //draw
             grid.Draw(gfx);
@@ -47,31 +48,34 @@ namespace GMR_Pathfinding
             pictureBox1.Image = bitmap;
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 
-            if (mouseDown)
-            {
+            //if (mouseDown)
+            //{
                 selectedColor = bitmap.GetPixel(mousePos.X, mousePos.Y);
-            }
+            //}
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
+                prevMouseDown = mouseDown;
+                mouseDown = true;
                 //TODO:no work when the mouse leaves the form
-                if (mousePos.X > 0 && mousePos.X < bitmap.Size.Width && mousePos.Y > 0 && mousePos.Y < bitmap.Size.Height)
-                {
-                    mouseDown = true;
-                }
-                else
-                {
-                    mouseDown = false;
-                }
+                //if (mousePos.X > 0 && mousePos.X < bitmap.Size.Width && mousePos.Y > 0 && mousePos.Y < bitmap.Size.Height)
+                //{
+                //    mouseDown = true;
+                //}
+                //else
+                //{
+                //    mouseDown = false;
+                //}
             }
         }
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
+                prevMouseDown = mouseDown;
                 mouseDown = false;
             }
         }

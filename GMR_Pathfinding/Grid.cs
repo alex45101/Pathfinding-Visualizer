@@ -13,6 +13,15 @@ namespace GMR_Pathfinding
         public int CellSize { get; private set; }
         public int Thickness { get; private set; }
 
+        enum CellMoveState
+        {
+            None,
+            Start,
+            End,
+            Wall,
+            NoneWall
+        }
+
         //TODO fix
         //need to maintain walls too
         Vertex<Cell> startPoint;
@@ -24,16 +33,11 @@ namespace GMR_Pathfinding
         Color noneWallColor = Color.White;
         Color wallColor = Color.Gray;
 
+        CellMoveState moveState = CellMoveState.None;
+        CellMoveState prevMoveState;
+
         Graph<Cell> graph;
         Vertex<Cell>[] cells;
-
-        enum CellMoveState
-        {
-            None,
-            Start,
-            End,
-            Wall
-        }
 
         public Grid(int width, int height, int cellSize, int thickness)
         {
@@ -43,18 +47,17 @@ namespace GMR_Pathfinding
             Thickness = thickness;
 
             CreateCells();
-        }
+        }     
 
-        CellMoveState moveState = CellMoveState.None;
-
-        public void Update(bool mouseDown, Point mousePos, Color selectedColor, Size imageSize)
+        public void Update(bool mouseDown, bool prevMouseDown, Point mousePos, Color selectedColor, Size imageSize)
         {
-            if (mouseDown)
-            {                
+            //TODO fix start and end point disappearing
+            if (mouseDown && !prevMouseDown)
+            {
                 //moving start point
                 if (selectedColor.R == startColor.R && selectedColor.G == startColor.G && selectedColor.B == startColor.B)
                 {
-                    moveState = CellMoveState.Start;                    
+                    moveState = CellMoveState.Start;
                 }
                 //moving end point
                 else if (selectedColor.R == endColor.R && selectedColor.G == endColor.G && selectedColor.B == endColor.B)
@@ -62,9 +65,14 @@ namespace GMR_Pathfinding
                     moveState = CellMoveState.End;
                 }
                 //walls
-                else if (selectedColor.R == noneWallColor.R && selectedColor.G == noneWallColor.G && selectedColor.B == noneWallColor.B)
+                else if (prevMoveState != CellMoveState.NoneWall && selectedColor.R == noneWallColor.R && selectedColor.G == noneWallColor.G && selectedColor.B == noneWallColor.B)
                 {
                     moveState = CellMoveState.Wall;
+                }
+                //nonewalls
+                else if (prevMoveState != CellMoveState.Wall && selectedColor.R == wallColor.R && selectedColor.G == wallColor.G && selectedColor.B == wallColor.B)
+                {
+                    moveState = CellMoveState.NoneWall;
                 }
             }
             else
@@ -72,12 +80,17 @@ namespace GMR_Pathfinding
                 moveState = CellMoveState.None;
             }
 
+            //debug
+            Console.WriteLine(moveState.ToString());
+
             if (moveState != CellMoveState.None)
             {
-                int index = GetIndex(
-                   (int)(mousePos.X * (float)Form1.GridSize / imageSize.Width),
-                   (int)(mousePos.Y * (float)Form1.GridSize / imageSize.Height)
-                );
+                Point cellPoint = new Point(
+                    (int)(mousePos.X * (float)Form1.GridSize / imageSize.Width),
+                    (int)(mousePos.Y * (float)Form1.GridSize / imageSize.Height)
+                    );
+
+                int index = GetIndex(cellPoint.X, cellPoint.Y);
 
                 switch (moveState)
                 {
@@ -88,10 +101,15 @@ namespace GMR_Pathfinding
                         SetEndPoint(index);
                         break;
                     case CellMoveState.Wall:
-                        SetWall(index);
+                        SetWall(index, cellPoint.X, cellPoint.Y);
+                        break;
+                    case CellMoveState.NoneWall:
+                        RemoveWall(index, cellPoint.X, cellPoint.Y);
                         break;
                 }
             }
+
+            prevMoveState = moveState;
         }
 
         public void Draw(Graphics gfx)
@@ -117,8 +135,6 @@ namespace GMR_Pathfinding
             {
                 for (int x = 0; x < Width; x++)
                 {
-
-
                     graph.AddVertex(new Vertex<Cell>(new Cell(new Point(x * CellSize, y * CellSize), CellSize, Thickness)));
                 }
             }
@@ -131,29 +147,7 @@ namespace GMR_Pathfinding
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    //(x, y)
-                    int index = GetIndex(x, y);
-
-                    //above curr cell
-                    if (y > 0)
-                    {
-                        graph.AddEdge(cells[index], cells[(y - 1) * Width + x], 1);
-                    }
-                    //left curr cell
-                    if (x > 0)
-                    {
-                        graph.AddEdge(cells[index], cells[y * Width + (x - 1)], 1);
-                    }
-                    //right curr cell
-                    if (x < Width - 1)
-                    {
-                        graph.AddEdge(cells[index], cells[y * Width + (x + 1)], 1);
-                    }
-                    //below curr cell
-                    if (y < Height - 1)
-                    {
-                        graph.AddEdge(cells[index], cells[(y + 1) * Width + x], 1);
-                    }
+                    AddEdges(x, y);
                 }
             }
 
@@ -162,33 +156,108 @@ namespace GMR_Pathfinding
             SetEndPoint(cells.Length - 1);
         }
 
+        private void AddEdges(int x, int y)
+        {
+            int index = GetIndex(x, y);
+
+            //above curr cell
+            if (y > 0)
+            {
+                graph.AddEdge(cells[index], cells[(y - 1) * Width + x], 1);
+            }
+            //left curr cell
+            if (x > 0)
+            {
+                graph.AddEdge(cells[index], cells[y * Width + (x - 1)], 1);
+            }
+            //right curr cell
+            if (x < Width - 1)
+            {
+                graph.AddEdge(cells[index], cells[y * Width + (x + 1)], 1);
+            }
+            //below curr cell
+            if (y < Height - 1)
+            {
+                graph.AddEdge(cells[index], cells[(y + 1) * Width + x], 1);
+            }
+        }
+
+        private void RemoveEdges(int x, int y)
+        {
+            int index = GetIndex(x, y);
+
+            //above curr cell
+            if (y > 0)
+            {
+                graph.RemoveEdge(cells[index], cells[(y - 1) * Width + x]);
+            }
+            //left curr cell
+            if (x > 0)
+            {
+                graph.RemoveEdge(cells[index], cells[y * Width + (x - 1)]);
+            }
+            //right curr cell
+            if (x < Width - 1)
+            {
+                graph.RemoveEdge(cells[index], cells[y * Width + (x + 1)]);
+            }
+            //below curr cell
+            if (y < Height - 1)
+            {
+                graph.RemoveEdge(cells[index], cells[(y + 1) * Width + x]);
+            }
+        }
+
         private void SetStartPoint(int index)
         {
-            if (startPoint != null)
+            if (!walls.Contains(cells[index].Value))
             {
-                startPoint.Value.FillColor = Color.White;
-            }
+                if (startPoint != null)
+                {
+                    startPoint.Value.FillColor = Color.White;
+                }
 
-            startPoint = cells[index];
-            startPoint.Value.FillColor = startColor;
+                startPoint = cells[index];
+                startPoint.Value.FillColor = startColor;
+            }
         }
 
         private void SetEndPoint(int index)
         {
-            if (endPoint != null)
+            if (!walls.Contains(cells[index].Value))
             {
-                endPoint.Value.FillColor = Color.White;
-            }
+                if (endPoint != null)
+                {
+                    endPoint.Value.FillColor = Color.White;
+                }
 
-            endPoint = cells[index];
-            endPoint.Value.FillColor = endColor;
+                endPoint = cells[index];
+                endPoint.Value.FillColor = endColor;
+            }
         }
 
-        private void SetWall(int index)
+        private void SetWall(int index, int x, int y)
         {
-            cells[index].Value.FillColor = wallColor;
+            if (startPoint != cells[index] || endPoint != cells[index])
+            {
+                cells[index].Value.FillColor = wallColor;
 
-            walls.Add(cells[index].Value);
+                RemoveEdges(x, y);
+
+                walls.Add(cells[index].Value);
+            }
+        }
+
+        private void RemoveWall(int index, int x, int y)
+        {
+            if (startPoint != cells[index] || endPoint != cells[index])
+            {
+                cells[index].Value.FillColor = noneWallColor;
+
+                AddEdges(x, y);
+
+                walls.Remove(cells[index].Value);
+            }
         }
     }
 }
