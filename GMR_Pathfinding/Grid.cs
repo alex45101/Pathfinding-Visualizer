@@ -11,21 +11,32 @@ namespace GMR_Pathfinding
         public int Width { get; private set; }
         public int Height { get; private set; }
         public int CellSize { get; private set; }
-        public int Thickness { get; private set; }        
+        public int Thickness { get; private set; }
 
         //TODO fix
         //need to maintain walls too
         Vertex<Cell> startPoint;
         Vertex<Cell> endPoint;
-        
+        List<Cell> walls;
+
         Color startColor = Color.Green;
         Color endColor = Color.Red;
+        Color noneWallColor = Color.White;
+        Color wallColor = Color.Gray;
 
         Graph<Cell> graph;
         Vertex<Cell>[] cells;
 
-        public Grid(int width, int height, int cellSize, int thickness) 
-        { 
+        enum CellMoveState
+        {
+            None,
+            Start,
+            End,
+            Wall
+        }
+
+        public Grid(int width, int height, int cellSize, int thickness)
+        {
             Width = width;
             Height = height;
             CellSize = cellSize;
@@ -34,34 +45,51 @@ namespace GMR_Pathfinding
             CreateCells();
         }
 
+        CellMoveState moveState = CellMoveState.None;
+
         public void Update(bool mouseDown, Point mousePos, Color selectedColor, Size imageSize)
         {
             if (mouseDown)
-            {
-                //TODO Fix mouse movement
-                int index = GetIndex(
-                    (int)(mousePos.X * (float)Form1.GridSize / imageSize.Width),
-                    (int)(mousePos.Y * (float)Form1.GridSize / imageSize.Height)
-                );
-
-             
-              
-
+            {                
                 //moving start point
                 if (selectedColor.R == startColor.R && selectedColor.G == startColor.G && selectedColor.B == startColor.B)
                 {
-                    //debug
-                    Console.WriteLine(index);
-                    SetStartPoint(index);
+                    moveState = CellMoveState.Start;                    
                 }
                 //moving end point
                 else if (selectedColor.R == endColor.R && selectedColor.G == endColor.G && selectedColor.B == endColor.B)
                 {
-                    SetEndPoint(index);
+                    moveState = CellMoveState.End;
                 }
-                else
-                { 
-                    //wall logic
+                //walls
+                else if (selectedColor.R == noneWallColor.R && selectedColor.G == noneWallColor.G && selectedColor.B == noneWallColor.B)
+                {
+                    moveState = CellMoveState.Wall;
+                }
+            }
+            else
+            {
+                moveState = CellMoveState.None;
+            }
+
+            if (moveState != CellMoveState.None)
+            {
+                int index = GetIndex(
+                   (int)(mousePos.X * (float)Form1.GridSize / imageSize.Width),
+                   (int)(mousePos.Y * (float)Form1.GridSize / imageSize.Height)
+                );
+
+                switch (moveState)
+                {
+                    case CellMoveState.Start:
+                        SetStartPoint(index);
+                        break;
+                    case CellMoveState.End:
+                        SetEndPoint(index);
+                        break;
+                    case CellMoveState.Wall:
+                        SetWall(index);
+                        break;
                 }
             }
         }
@@ -82,12 +110,15 @@ namespace GMR_Pathfinding
         private void CreateCells()
         {
             graph = new Graph<Cell>();
+            walls = new List<Cell>();
 
             //create vertices
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {
+
+
                     graph.AddVertex(new Vertex<Cell>(new Cell(new Point(x * CellSize, y * CellSize), CellSize, Thickness)));
                 }
             }
@@ -128,7 +159,7 @@ namespace GMR_Pathfinding
 
             //setup start point
             SetStartPoint(0);
-            SetEndPoint(cells.Length - 1);            
+            SetEndPoint(cells.Length - 1);
         }
 
         private void SetStartPoint(int index)
@@ -152,6 +183,12 @@ namespace GMR_Pathfinding
             endPoint = cells[index];
             endPoint.Value.FillColor = endColor;
         }
-       
+
+        private void SetWall(int index)
+        {
+            cells[index].Value.FillColor = wallColor;
+
+            walls.Add(cells[index].Value);
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace GMR_Pathfinding
 
         public static readonly int GridSize = 15;
         readonly int cellSize = 30;
-        readonly int thickness = 5;
+        readonly int thickness = 3;
 
         bool mouseDown = false;
         Point mousePos = new Point();
@@ -19,9 +19,11 @@ namespace GMR_Pathfinding
         Bitmap bitmap;
 
         Grid grid;
-       
+
+        int tempClicks = 0;
+
         private void Form1_Load(object sender, EventArgs e)
-        {            
+        {
             bitmap = new Bitmap(GridSize * cellSize + thickness * 2, GridSize * cellSize + thickness * 2);
             gfx = Graphics.FromImage(bitmap);
 
@@ -35,7 +37,7 @@ namespace GMR_Pathfinding
             gfx.Clear(BackColor);
 
             //update
-            this.Text = $"X:{mousePos.X}, Y:{mousePos.Y}, Color: {selectedColor}";
+            this.Text = $"Clicks: {tempClicks} X:{mousePos.X}, Y:{mousePos.Y}, Color: {selectedColor}";
 
             grid.Update(mouseDown, mousePos, selectedColor, bitmap.Size);
 
@@ -45,14 +47,25 @@ namespace GMR_Pathfinding
             pictureBox1.Image = bitmap;
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 
-            selectedColor = bitmap.GetPixel(mousePos.X, mousePos.Y);
+            if (mouseDown)
+            {
+                selectedColor = bitmap.GetPixel(mousePos.X, mousePos.Y);
+            }
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                mouseDown = true;
+                //TODO:no work when the mouse leaves the form
+                if (mousePos.X > 0 && mousePos.X < bitmap.Size.Width && mousePos.Y > 0 && mousePos.Y < bitmap.Size.Height)
+                {
+                    mouseDown = true;
+                }
+                else
+                {
+                    mouseDown = false;
+                }
             }
         }
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -69,6 +82,9 @@ namespace GMR_Pathfinding
             mousePos.Y = (int)(e.Y * ((float)bitmap.Size.Height / pictureBox1.Size.Height));
         }
 
-
+        private void pictureBox1_MouseLeave(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
