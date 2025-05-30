@@ -26,12 +26,7 @@ namespace GMR_Pathfinding
         //need to maintain walls too
         Vertex<Cell> startPoint;
         Vertex<Cell> endPoint;
-        List<Cell> walls;
-
-        Color startColor = Color.Green;
-        Color endColor = Color.Red;
-        Color noneWallColor = Color.White;
-        Color wallColor = Color.Gray;
+        HashSet<Cell> walls;
 
         CellMoveState moveState = CellMoveState.None;
         CellMoveState prevMoveState;
@@ -51,62 +46,41 @@ namespace GMR_Pathfinding
 
         public void Update(bool mouseDown, bool prevMouseDown, Point mousePos, Color selectedColor, Size imageSize)
         {
-            //TODO fix start and end point disappearing
-            if (mouseDown && !prevMouseDown)
+            if (prevMoveState == CellMoveState.None && mouseDown && !prevMouseDown)
             {
                 //moving start point
-                if (selectedColor.R == startColor.R && selectedColor.G == startColor.G && selectedColor.B == startColor.B)
+                if (selectedColor.R == Settings.StartColor.R && selectedColor.G == Settings.StartColor.G && selectedColor.B == Settings.StartColor.B)
                 {
                     moveState = CellMoveState.Start;
                 }
                 //moving end point
-                else if (selectedColor.R == endColor.R && selectedColor.G == endColor.G && selectedColor.B == endColor.B)
+                else if (selectedColor.R == Settings.EndColor.R && selectedColor.G == Settings.EndColor.G && selectedColor.B == Settings.EndColor.B)
                 {
                     moveState = CellMoveState.End;
                 }
                 //walls
-                else if (prevMoveState != CellMoveState.NoneWall && selectedColor.R == noneWallColor.R && selectedColor.G == noneWallColor.G && selectedColor.B == noneWallColor.B)
+                else if (prevMoveState != CellMoveState.NoneWall && selectedColor.R == Settings.NoneWallColor.R && selectedColor.G == Settings.NoneWallColor.G && selectedColor.B == Settings.NoneWallColor.B)
                 {
                     moveState = CellMoveState.Wall;
                 }
                 //nonewalls
-                else if (prevMoveState != CellMoveState.Wall && selectedColor.R == wallColor.R && selectedColor.G == wallColor.G && selectedColor.B == wallColor.B)
+                else if (prevMoveState != CellMoveState.Wall && selectedColor.R == Settings.WallColor.R && selectedColor.G == Settings.WallColor.G && selectedColor.B == Settings.WallColor.B)
                 {
                     moveState = CellMoveState.NoneWall;
                 }
             }
-            else
+            else if(!mouseDown && prevMouseDown)
             {
                 moveState = CellMoveState.None;
             }
 
             //debug
             Console.WriteLine(moveState.ToString());
+            //debug
 
             if (moveState != CellMoveState.None)
             {
-                Point cellPoint = new Point(
-                    (int)(mousePos.X * (float)Form1.GridSize / imageSize.Width),
-                    (int)(mousePos.Y * (float)Form1.GridSize / imageSize.Height)
-                    );
-
-                int index = GetIndex(cellPoint.X, cellPoint.Y);
-
-                switch (moveState)
-                {
-                    case CellMoveState.Start:
-                        SetStartPoint(index);
-                        break;
-                    case CellMoveState.End:
-                        SetEndPoint(index);
-                        break;
-                    case CellMoveState.Wall:
-                        SetWall(index, cellPoint.X, cellPoint.Y);
-                        break;
-                    case CellMoveState.NoneWall:
-                        RemoveWall(index, cellPoint.X, cellPoint.Y);
-                        break;
-                }
+                MouseStateAction(mousePos, imageSize);
             }
 
             prevMoveState = moveState;
@@ -128,7 +102,7 @@ namespace GMR_Pathfinding
         private void CreateCells()
         {
             graph = new Graph<Cell>();
-            walls = new List<Cell>();
+            walls = new HashSet<Cell>();
 
             //create vertices
             for (int y = 0; y < Height; y++)
@@ -154,6 +128,32 @@ namespace GMR_Pathfinding
             //setup start point
             SetStartPoint(0);
             SetEndPoint(cells.Length - 1);
+        }
+
+        private void MouseStateAction(Point mousePos, Size imageSize)
+        {
+            Point cellPoint = new Point(
+                        (int)(mousePos.X * (float)Settings.GridSize / imageSize.Width),
+                        (int)(mousePos.Y * (float)Settings.GridSize / imageSize.Height)
+                        );
+
+            int index = GetIndex(cellPoint.X, cellPoint.Y);
+
+            switch (moveState)
+            {
+                case CellMoveState.Start:
+                    SetStartPoint(index);
+                    break;
+                case CellMoveState.End:
+                    SetEndPoint(index);
+                    break;
+                case CellMoveState.Wall:
+                    SetWall(index, cellPoint.X, cellPoint.Y);
+                    break;
+                case CellMoveState.NoneWall:
+                    RemoveWall(index, cellPoint.X, cellPoint.Y);
+                    break;
+            }
         }
 
         private void AddEdges(int x, int y)
@@ -210,7 +210,7 @@ namespace GMR_Pathfinding
 
         private void SetStartPoint(int index)
         {
-            if (!walls.Contains(cells[index].Value))
+            if (endPoint != cells[index] && !walls.Contains(cells[index].Value))
             {
                 if (startPoint != null)
                 {
@@ -218,13 +218,13 @@ namespace GMR_Pathfinding
                 }
 
                 startPoint = cells[index];
-                startPoint.Value.FillColor = startColor;
+                startPoint.Value.FillColor = Settings.StartColor;
             }
         }
 
         private void SetEndPoint(int index)
         {
-            if (!walls.Contains(cells[index].Value))
+            if (startPoint != cells[index] && !walls.Contains(cells[index].Value))
             {
                 if (endPoint != null)
                 {
@@ -232,7 +232,7 @@ namespace GMR_Pathfinding
                 }
 
                 endPoint = cells[index];
-                endPoint.Value.FillColor = endColor;
+                endPoint.Value.FillColor = Settings.EndColor;
             }
         }
 
@@ -240,7 +240,7 @@ namespace GMR_Pathfinding
         {
             if (startPoint != cells[index] || endPoint != cells[index])
             {
-                cells[index].Value.FillColor = wallColor;
+                cells[index].Value.FillColor = Settings.WallColor;
 
                 RemoveEdges(x, y);
 
@@ -252,7 +252,7 @@ namespace GMR_Pathfinding
         {
             if (startPoint != cells[index] || endPoint != cells[index])
             {
-                cells[index].Value.FillColor = noneWallColor;
+                cells[index].Value.FillColor = Settings.NoneWallColor;
 
                 AddEdges(x, y);
 

@@ -7,10 +7,7 @@ namespace GMR_Pathfinding
             InitializeComponent();
         }
 
-        public static readonly int GridSize = 15;
-        readonly int cellSize = 30;
-        readonly int thickness = 3;
-
+       
         bool mouseDown = false;
         bool prevMouseDown = false;
         Point mousePos = new Point();
@@ -25,10 +22,12 @@ namespace GMR_Pathfinding
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            bitmap = new Bitmap(GridSize * cellSize + thickness * 2, GridSize * cellSize + thickness * 2);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            bitmap = new Bitmap(Settings.GridSize * Settings.CellSize + Settings.Thickness * 2, Settings.GridSize * Settings.CellSize + Settings.Thickness * 2);
             gfx = Graphics.FromImage(bitmap);
 
-            grid = new Grid(GridSize, GridSize, cellSize, thickness);
+            grid = new Grid(Settings.GridSize, Settings.GridSize, Settings.CellSize, Settings.Thickness);
 
             Size = bitmap.Size;
         }
@@ -46,12 +45,11 @@ namespace GMR_Pathfinding
             grid.Draw(gfx);
 
             pictureBox1.Image = bitmap;
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 
-            //if (mouseDown)
-            //{
+            if (mousePos.X >= 0 && mousePos.X <= bitmap.Width && mousePos.Y >= 0 && mousePos.Y <= bitmap.Height)
+            {
                 selectedColor = bitmap.GetPixel(mousePos.X, mousePos.Y);
-            //}
+            }
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -60,15 +58,6 @@ namespace GMR_Pathfinding
             {
                 prevMouseDown = mouseDown;
                 mouseDown = true;
-                //TODO:no work when the mouse leaves the form
-                //if (mousePos.X > 0 && mousePos.X < bitmap.Size.Width && mousePos.Y > 0 && mousePos.Y < bitmap.Size.Height)
-                //{
-                //    mouseDown = true;
-                //}
-                //else
-                //{
-                //    mouseDown = false;
-                //}
             }
         }
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
