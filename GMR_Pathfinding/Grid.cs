@@ -94,6 +94,18 @@ namespace GMR_Pathfinding
             }
         }
 
+        public void BreadthFirstVisual()
+        {
+
+
+            Action<Vertex<Cell>, HashSet<Vertex<Cell>>> addToVisualState = (curr, toBeVisisted) =>
+            {
+
+            };
+
+            Queue<Vertex<Cell>> path = graph.BreadthFirstPath(startPoint, endPoint, addToVisualState);
+        }
+
         private int GetIndex(int x, int y)
         {
             return y * Width + x;

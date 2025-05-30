@@ -6,7 +6,7 @@ namespace GMR_Pathfinding
         {
             InitializeComponent();
         }
-       
+
         bool mouseDown = false;
         bool prevMouseDown = false;
         Point mousePos = new Point();
@@ -76,7 +76,16 @@ namespace GMR_Pathfinding
 
         private void pictureBox1_MouseLeave(object sender, EventArgs e)
         {
-            
+
+        }
+
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //Enter Key
+            if (e.KeyChar == '\r')
+            { 
+                //Start Pathfinding
+            }
         }
     }
 }

@@ -201,6 +201,13 @@ namespace GMR_Pathfinding
 
         public Queue<Vertex<T>> BreadthFirstPath(Vertex<T> start, Vertex<T> end)
         {
+            Action<Vertex<T>, HashSet<Vertex<T>>> empty = (x, y) => { };
+
+            return BreadthFirstPath(start, end, empty);
+        }
+
+        public Queue<Vertex<T>> BreadthFirstPath(Vertex<T> start, Vertex<T> end, Action<Vertex<T>, HashSet<Vertex<T>>> action)
+        {
             bool foundPath = false;
             var isVisted = vertices.ToDictionary(x => x, x => false);
 
@@ -224,13 +231,20 @@ namespace GMR_Pathfinding
                         break;
                     }
 
+                    HashSet<Vertex<T>> addedToQueue = new HashSet<Vertex<T>>();
+
                     foreach (var edge in curr.Edges.Outgoing)
                     {
                         if (!isVisted[edge.End] && !queue.Contains(edge.End))
                         {
                             queue.Enqueue(edge.End);
+
+                            //for visualizer 
+                            addedToQueue.Add(edge.End);
                         }
                     }
+
+                    action(curr, addedToQueue);
                 }
             }
 
