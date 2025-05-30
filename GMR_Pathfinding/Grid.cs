@@ -139,20 +139,24 @@ namespace GMR_Pathfinding
 
             int index = GetIndex(cellPoint.X, cellPoint.Y);
 
-            switch (moveState)
+
+            if (index < cells.Length)
             {
-                case CellMoveState.Start:
-                    SetStartPoint(index);
-                    break;
-                case CellMoveState.End:
-                    SetEndPoint(index);
-                    break;
-                case CellMoveState.Wall:
-                    SetWall(index, cellPoint.X, cellPoint.Y);
-                    break;
-                case CellMoveState.NoneWall:
-                    RemoveWall(index, cellPoint.X, cellPoint.Y);
-                    break;
+                switch (moveState)
+                {
+                    case CellMoveState.Start:
+                        SetStartPoint(index);
+                        break;
+                    case CellMoveState.End:
+                        SetEndPoint(index);
+                        break;
+                    case CellMoveState.Wall:
+                        SetWall(index, cellPoint.X, cellPoint.Y);
+                        break;
+                    case CellMoveState.NoneWall:
+                        RemoveWall(index, cellPoint.X, cellPoint.Y);
+                        break;
+                }
             }
         }
 

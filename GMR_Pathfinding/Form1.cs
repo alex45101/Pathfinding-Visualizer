@@ -6,7 +6,6 @@ namespace GMR_Pathfinding
         {
             InitializeComponent();
         }
-
        
         bool mouseDown = false;
         bool prevMouseDown = false;

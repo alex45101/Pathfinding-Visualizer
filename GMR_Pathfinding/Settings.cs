@@ -16,5 +16,7 @@ namespace GMR_Pathfinding
         public static readonly Color EndColor = Color.Red;
         public static readonly Color NoneWallColor = Color.White;
         public static readonly Color WallColor = Color.Gray;
+        public static readonly Color VisitedColor = Color.CornflowerBlue;
+        public static readonly Color ToBeVisitedColor = Color.AliceBlue;
     }
 }
