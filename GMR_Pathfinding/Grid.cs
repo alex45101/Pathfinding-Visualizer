@@ -94,16 +94,31 @@ namespace GMR_Pathfinding
             }
         }
 
-        public void BreadthFirstVisual()
+        public Queue<VisualState> BreadthFirstVisual()
         {
-
+            Queue<VisualState> visualStates = new Queue<VisualState>();
 
             Action<Vertex<Cell>, HashSet<Vertex<Cell>>> addToVisualState = (curr, toBeVisisted) =>
             {
+                //no need to include start in the visual state
+                if (curr == startPoint)
+                    curr = null;
 
+                //Remove the endPoint if its in the to be visited
+                toBeVisisted.Remove(endPoint);
+                
+
+
+                VisualState temp = new VisualState(curr, toBeVisisted);
+
+                visualStates.Enqueue(temp);
             };
 
             Queue<Vertex<Cell>> path = graph.BreadthFirstPath(startPoint, endPoint, addToVisualState);
+
+            visualStates.Enqueue(new VisualState(null, path.ToHashSet()));
+
+            return visualStates;
         }
 
         private int GetIndex(int x, int y)
@@ -180,21 +195,25 @@ namespace GMR_Pathfinding
             if (y > 0)
             {
                 graph.AddEdge(cells[index], cells[(y - 1) * Width + x], 1);
+                graph.AddEdge(cells[(y - 1) * Width + x], cells[index], 1);
             }
             //left curr cell
             if (x > 0)
             {
                 graph.AddEdge(cells[index], cells[y * Width + (x - 1)], 1);
+                graph.AddEdge(cells[y * Width + (x - 1)], cells[index], 1);
             }
             //right curr cell
             if (x < Width - 1)
             {
                 graph.AddEdge(cells[index], cells[y * Width + (x + 1)], 1);
+                graph.AddEdge(cells[y * Width + (x + 1)], cells[index], 1);
             }
             //below curr cell
             if (y < Height - 1)
             {
                 graph.AddEdge(cells[index], cells[(y + 1) * Width + x], 1);
+                graph.AddEdge(cells[(y + 1) * Width + x], cells[index], 1);                
             }
         }
 
@@ -206,21 +225,25 @@ namespace GMR_Pathfinding
             if (y > 0)
             {
                 graph.RemoveEdge(cells[index], cells[(y - 1) * Width + x]);
+                graph.RemoveEdge(cells[(y - 1) * Width + x], cells[index]);
             }
             //left curr cell
             if (x > 0)
             {
                 graph.RemoveEdge(cells[index], cells[y * Width + (x - 1)]);
+                graph.RemoveEdge(cells[y * Width + (x - 1)], cells[index]);
             }
             //right curr cell
             if (x < Width - 1)
             {
                 graph.RemoveEdge(cells[index], cells[y * Width + (x + 1)]);
+                graph.RemoveEdge(cells[y * Width + (x + 1)], cells[index]);
             }
             //below curr cell
             if (y < Height - 1)
             {
                 graph.RemoveEdge(cells[index], cells[(y + 1) * Width + x]);
+                graph.RemoveEdge(cells[(y + 1) * Width + x], cells[index]);
             }
         }
 

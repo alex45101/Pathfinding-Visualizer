@@ -31,11 +31,13 @@
             components = new System.ComponentModel.Container();
             pictureBox1 = new PictureBox();
             timer1 = new System.Windows.Forms.Timer(components);
+            visualTimer = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
             // 
+            pictureBox1.BorderStyle = BorderStyle.FixedSingle;
             pictureBox1.Dock = DockStyle.Fill;
             pictureBox1.Location = new Point(0, 0);
             pictureBox1.Name = "pictureBox1";
@@ -52,6 +54,11 @@
             timer1.Enabled = true;
             timer1.Interval = 75;
             timer1.Tick += timer1_Tick;
+            // 
+            // visualTimer
+            // 
+            visualTimer.Interval = 250;
+            visualTimer.Tick += visualTimer_Tick;
             // 
             // Form1
             // 
@@ -71,5 +78,6 @@
 
         private PictureBox pictureBox1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer visualTimer;
     }
 }

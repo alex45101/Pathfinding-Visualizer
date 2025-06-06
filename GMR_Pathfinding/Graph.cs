@@ -174,7 +174,7 @@ namespace GMR_Pathfinding
         {
             Edge<T>? edgeToRemove = GetEdge(a, b);
 
-            if (a != null || b != null || edgeToRemove == null)
+            if (a == null || b == null || edgeToRemove == null)
                 return false;
 
             edgeToRemove.Start.Edges.Outgoing.Remove(edgeToRemove);

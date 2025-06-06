@@ -19,6 +19,8 @@ namespace GMR_Pathfinding
 
         int tempClicks = 0;
 
+        Queue<VisualState> temp = new Queue<VisualState>();
+
         private void Form1_Load(object sender, EventArgs e)
         {
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -83,8 +85,23 @@ namespace GMR_Pathfinding
         {
             //Enter Key
             if (e.KeyChar == '\r')
-            { 
+            {
                 //Start Pathfinding
+                temp = grid.BreadthFirstVisual();
+                visualTimer.Enabled = true;
+            }
+        }
+
+        private void visualTimer_Tick(object sender, EventArgs e)
+        {
+            if (temp.Count > 0)
+            {
+                var thing = temp.Dequeue();
+                thing.SetColors();
+            }
+            else
+            {
+                visualTimer.Enabled = false;
             }
         }
     }
