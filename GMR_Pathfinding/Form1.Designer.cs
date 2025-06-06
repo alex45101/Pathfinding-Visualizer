@@ -57,7 +57,6 @@
             // 
             // visualTimer
             // 
-            visualTimer.Interval = 250;
             visualTimer.Tick += visualTimer_Tick;
             // 
             // Form1

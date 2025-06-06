@@ -212,22 +212,32 @@ namespace GMR_Pathfinding
             var isVisted = vertices.ToDictionary(x => x, x => false);
 
             Queue<Vertex<T>> path = new Queue<Vertex<T>>();
+
+            Dictionary<Vertex<T>, Vertex<T>> predecessor = new Dictionary<Vertex<T>, Vertex<T>>();
             Queue<Vertex<T>> queue = new Queue<Vertex<T>>();
 
             if (isVisted != null)
             {
                 queue.Enqueue(start);
+                predecessor.Add(start, null);
 
                 while (queue.Count > 0)
                 {
                     Vertex<T> curr = queue.Dequeue();
                     isVisted[curr] = true;
 
-                    path.Enqueue(curr);
+                    //path.Enqueue(curr);
 
                     if (curr == end)
                     {
                         foundPath = true;
+
+                        for (Vertex<T> thing = end; thing != null; thing = predecessor[thing])
+                        { 
+                            path.Enqueue(thing);
+                        }
+                        
+
                         break;
                     }
 
@@ -238,6 +248,7 @@ namespace GMR_Pathfinding
                         if (!isVisted[edge.End] && !queue.Contains(edge.End))
                         {
                             queue.Enqueue(edge.End);
+                            predecessor.Add(edge.End, curr);
 
                             //for visualizer 
                             addedToQueue.Add(edge.End);
