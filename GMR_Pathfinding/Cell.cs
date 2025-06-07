@@ -12,7 +12,17 @@ namespace GMR_Pathfinding
         public int Size { get; set; }
         public int Thickness { get; set; }
         public Color BorderColor { get => BorderColor; set => pen = new Pen(value, Thickness); }
-        public Color FillColor { get => FillColor; set => brush = new SolidBrush(value); }
+        public Color FillColor
+        {
+            get => FillColor;
+            set
+            {
+                PrevFillColor = ((SolidBrush)brush).Color;
+                brush = new SolidBrush(value);
+            }
+
+        }
+        public Color PrevFillColor { get; private set; }
 
         private Pen pen;
         private Brush brush;
@@ -48,7 +58,7 @@ namespace GMR_Pathfinding
                     return 1;
                 }
                 else // smaller Y means smaller
-                { 
+                {
                     return -1;
                 }
             }

@@ -12,6 +12,8 @@ namespace GMR_Pathfinding
         public static readonly int CellSize = 30;
         public static readonly int Thickness = 3;
 
+        public static readonly int VisualTimerDefault = 500;
+
         public static readonly Color StartColor = Color.Green;
         public static readonly Color EndColor = Color.Red;
         public static readonly Color NoneWallColor = Color.White;

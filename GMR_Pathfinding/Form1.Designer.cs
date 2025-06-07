@@ -32,16 +32,23 @@
             pictureBox1 = new PictureBox();
             timer1 = new System.Windows.Forms.Timer(components);
             visualTimer = new System.Windows.Forms.Timer(components);
+            selectedAlgoComboBox = new ComboBox();
+            startButton = new Button();
+            speedTrackBar = new TrackBar();
+            pauseButton = new Button();
+            rightButton = new Button();
+            leftButton = new Button();
+            label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)speedTrackBar).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
             // 
             pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Location = new Point(0, 0);
+            pictureBox1.Location = new Point(12, 12);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1350, 878);
+            pictureBox1.Size = new Size(1577, 973);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             pictureBox1.MouseDown += pictureBox1_MouseDown;
@@ -59,18 +66,95 @@
             // 
             visualTimer.Tick += visualTimer_Tick;
             // 
+            // selectedAlgoComboBox
+            // 
+            selectedAlgoComboBox.FormattingEnabled = true;
+            selectedAlgoComboBox.Items.AddRange(new object[] { "Breadth First", "Depth First", "Dijkstra", "A*" });
+            selectedAlgoComboBox.Location = new Point(12, 991);
+            selectedAlgoComboBox.Name = "selectedAlgoComboBox";
+            selectedAlgoComboBox.Size = new Size(318, 40);
+            selectedAlgoComboBox.TabIndex = 1;
+            selectedAlgoComboBox.SelectedIndexChanged += selectedAlgoComboBox_SelectedIndexChanged;
+            // 
+            // startButton
+            // 
+            startButton.Location = new Point(1439, 991);
+            startButton.Name = "startButton";
+            startButton.Size = new Size(150, 46);
+            startButton.TabIndex = 2;
+            startButton.Text = "Start";
+            startButton.UseVisualStyleBackColor = true;
+            startButton.Click += startButton_Click;
+            // 
+            // speedTrackBar
+            // 
+            speedTrackBar.Location = new Point(336, 991);
+            speedTrackBar.Minimum = 1;
+            speedTrackBar.Name = "speedTrackBar";
+            speedTrackBar.Size = new Size(756, 90);
+            speedTrackBar.TabIndex = 3;
+            speedTrackBar.Value = 1;
+            speedTrackBar.Scroll += speedTrackBar_Scroll;
+            // 
+            // pauseButton
+            // 
+            pauseButton.Location = new Point(1306, 991);
+            pauseButton.Name = "pauseButton";
+            pauseButton.Size = new Size(127, 46);
+            pauseButton.TabIndex = 4;
+            pauseButton.Text = "Pause";
+            pauseButton.UseVisualStyleBackColor = true;
+            pauseButton.Click += pauseButton_Click;
+            // 
+            // rightButton
+            // 
+            rightButton.Location = new Point(1254, 991);
+            rightButton.Name = "rightButton";
+            rightButton.Size = new Size(46, 46);
+            rightButton.TabIndex = 5;
+            rightButton.Text = ">";
+            rightButton.UseVisualStyleBackColor = true;
+            rightButton.Click += rightButton_Click;
+            // 
+            // leftButton
+            // 
+            leftButton.Location = new Point(1098, 991);
+            leftButton.Name = "leftButton";
+            leftButton.Size = new Size(43, 46);
+            leftButton.TabIndex = 6;
+            leftButton.Text = "<";
+            leftButton.UseVisualStyleBackColor = true;
+            leftButton.Click += leftButton_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(1159, 999);
+            label1.Name = "label1";
+            label1.Size = new Size(78, 32);
+            label1.TabIndex = 7;
+            label1.Text = "label1";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1350, 878);
+            ClientSize = new Size(1601, 1049);
+            Controls.Add(label1);
+            Controls.Add(leftButton);
+            Controls.Add(rightButton);
+            Controls.Add(pauseButton);
+            Controls.Add(speedTrackBar);
+            Controls.Add(startButton);
+            Controls.Add(selectedAlgoComboBox);
             Controls.Add(pictureBox1);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
-            KeyPress += Form1_KeyPress;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)speedTrackBar).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -78,5 +162,12 @@
         private PictureBox pictureBox1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Timer visualTimer;
+        private ComboBox selectedAlgoComboBox;
+        private Button startButton;
+        private TrackBar speedTrackBar;
+        private Button pauseButton;
+        private Button rightButton;
+        private Button leftButton;
+        private Label label1;
     }
 }

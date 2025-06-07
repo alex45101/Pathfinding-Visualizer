@@ -7,10 +7,13 @@ namespace GMR_Pathfinding
             InitializeComponent();
         }
 
+
         bool mouseDown = false;
         bool prevMouseDown = false;
         Point mousePos = new Point();
         Color selectedColor = Color.Black;
+
+        SelectedAlgo selectedAlgo = SelectedAlgo.None;
 
         Graphics gfx;
         Bitmap bitmap;
@@ -19,18 +22,28 @@ namespace GMR_Pathfinding
 
         int tempClicks = 0;
 
-        Queue<VisualState> temp = new Queue<VisualState>();
+        VisualState[] visualStates = new VisualState[0];
+        int currentVisualState = 0;
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //set combo box
+            selectedAlgoComboBox.Items.Clear();
+
+            int tempLength = Enum.GetValues(typeof(SelectedAlgo)).Length;
+
+            for (int i = 1; i < tempLength; i++)
+            {
+                selectedAlgoComboBox.Items.Add(((SelectedAlgo)i).ToString());
+            }
+
+            //set picturebox and graphics
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 
             bitmap = new Bitmap(Settings.GridSize * Settings.CellSize + Settings.Thickness * 2, Settings.GridSize * Settings.CellSize + Settings.Thickness * 2);
             gfx = Graphics.FromImage(bitmap);
 
             grid = new Grid(Settings.GridSize, Settings.GridSize, Settings.CellSize, Settings.Thickness);
-
-            Size = bitmap.Size;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -81,27 +94,89 @@ namespace GMR_Pathfinding
 
         }
 
-        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //Enter Key
-            if (e.KeyChar == '\r')
-            {
-                //Start Pathfinding
-                temp = grid.BreadthFirstVisual();
-                visualTimer.Enabled = true;
-            }
-        }
-
         private void visualTimer_Tick(object sender, EventArgs e)
         {
-            if (temp.Count > 0)
+            if (currentVisualState < visualStates.Length)
             {
-                var thing = temp.Dequeue();
+                var thing = visualStates[currentVisualState];
                 thing.SetColors();
+
+                UpdateVisualState(1);
             }
             else
             {
                 visualTimer.Enabled = false;
+            }
+        }
+
+        private void speedTrackBar_Scroll(object sender, EventArgs e)
+        {
+            visualTimer.Interval = Settings.VisualTimerDefault / speedTrackBar.Value;
+        }
+
+        private void startButton_Click(object sender, EventArgs e)
+        {
+            //Start Pathfinding
+            switch (selectedAlgo)
+            {
+                case SelectedAlgo.None:
+                    break;
+                case SelectedAlgo.BreathFirst:
+                    visualStates = grid.BreadthFirstVisual().ToArray();
+                    break;
+                case SelectedAlgo.DepthFirst:
+                    break;
+                case SelectedAlgo.Dijkstra:
+                    break;
+                case SelectedAlgo.A:
+                    break;
+                default:
+                    break;
+            }
+
+            if (selectedAlgo > SelectedAlgo.None && selectedAlgo <= SelectedAlgo.A)
+            {
+                visualTimer.Enabled = true;
+            }
+        }
+
+        private void selectedAlgoComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedAlgo = (SelectedAlgo)((ComboBox)sender).SelectedIndex + 1;
+        }
+
+        private void pauseButton_Click(object sender, EventArgs e)
+        {
+            visualTimer.Enabled = false;
+        }
+
+        private void rightButton_Click(object sender, EventArgs e)
+        {
+            UpdateVisualState(1);
+
+            var thing = visualStates[currentVisualState];
+            thing.SetColors();
+        }
+
+        private void leftButton_Click(object sender, EventArgs e)
+        {
+            UpdateVisualState(-1);
+
+            var thing = visualStates[currentVisualState];
+            thing.ResetColors();
+        }
+
+        private void UpdateVisualState(int increment)
+        {
+            currentVisualState += increment;
+
+            if (currentVisualState >= 0 && currentVisualState <= visualStates.Length)
+            {
+                label1.Text = $"{currentVisualState} / {visualStates.Length}";
+            }
+            else
+            {
+                currentVisualState -= increment;
             }
         }
     }

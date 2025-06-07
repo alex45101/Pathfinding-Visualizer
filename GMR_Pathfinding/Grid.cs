@@ -13,15 +13,6 @@ namespace GMR_Pathfinding
         public int CellSize { get; private set; }
         public int Thickness { get; private set; }
 
-        enum CellMoveState
-        {
-            None,
-            Start,
-            End,
-            Wall,
-            NoneWall
-        }
-
         //TODO fix
         //need to maintain walls too
         Vertex<Cell> startPoint;

@@ -34,12 +34,12 @@ namespace GMR_Pathfinding
         {
             if (vistedCell != null)
             {
-                vistedCell.Value.FillColor = Settings.DefaultCellColor;
+                vistedCell.Value.FillColor = vistedCell.Value.PrevFillColor;
             }
 
             foreach (var cell in toBeVisitedCells)
             {
-                cell.Value.FillColor = Settings.DefaultCellColor;
+                cell.Value.FillColor = cell.Value.PrevFillColor;
             }
         }
     }
