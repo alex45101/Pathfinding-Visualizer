@@ -107,16 +107,20 @@ namespace GMR_Pathfinding
                 //Remove the endPoint if its in the to be visited
                 toBeVisisted.Remove(endPoint);
                 
-
-
                 VisualState temp = new VisualState(curr, toBeVisisted);
 
                 visualStates.Enqueue(temp);
             };
 
-            Queue<Vertex<Cell>> path = graph.BreadthFirstPath(startPoint, endPoint, addToVisualState);
+            HashSet<Vertex<Cell>> path = graph
+                .BreadthFirstPath(startPoint, endPoint, addToVisualState)
+                .ToHashSet();
 
-            visualStates.Enqueue(new VisualState(null, path.ToHashSet()));
+            //no need to include start and end as changes in visual state
+            path.Remove(startPoint);
+            path.Remove(endPoint);
+           
+            visualStates.Enqueue(new VisualPath(path));
 
             return visualStates;
         }

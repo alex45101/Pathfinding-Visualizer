@@ -8,8 +8,8 @@ namespace GMR_Pathfinding
 {
     public class VisualState
     {
-        Vertex<Cell> vistedCell;
-        HashSet<Vertex<Cell>> toBeVisitedCells;
+        protected Vertex<Cell> vistedCell;
+        protected HashSet<Vertex<Cell>> toBeVisitedCells;
 
         public VisualState(Vertex<Cell> VisistedCell, HashSet<Vertex<Cell>> ToBeVisitedCells)
         { 
@@ -17,7 +17,7 @@ namespace GMR_Pathfinding
             toBeVisitedCells = ToBeVisitedCells;
         }
 
-        public void SetColors()
+        public virtual void SetColors()
         {
             if (vistedCell != null)
             {
@@ -40,6 +40,22 @@ namespace GMR_Pathfinding
             foreach (var cell in toBeVisitedCells)
             {
                 cell.Value.FillColor = Settings.DefaultCellColor;
+            }
+        }
+    }
+
+    public class VisualPath : VisualState
+    {
+        public VisualPath(HashSet<Vertex<Cell>> ToBeVisitedCells) 
+            : base(null, ToBeVisitedCells)
+        {
+        }
+
+        public override void SetColors()
+        {
+            foreach (var cell in toBeVisitedCells)
+            {
+                cell.Value.FillColor = Settings.PathColor;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -226,23 +227,18 @@ namespace GMR_Pathfinding
                     Vertex<T> curr = queue.Dequeue();
                     isVisted[curr] = true;
 
-                    //path.Enqueue(curr);
-
+                    //path has been found
                     if (curr == end)
                     {
                         foundPath = true;
 
-                        for (Vertex<T> thing = end; thing != null; thing = predecessor[thing])
-                        { 
-                            path.Enqueue(thing);
-                        }
-                        
-
                         break;
                     }
 
+                    //hashset to give to visualizer
                     HashSet<Vertex<T>> addedToQueue = new HashSet<Vertex<T>>();
 
+                    //going through all the neighbors of the curr
                     foreach (var edge in curr.Edges.Outgoing)
                     {
                         if (!isVisted[edge.End] && !queue.Contains(edge.End))
@@ -260,7 +256,17 @@ namespace GMR_Pathfinding
             }
 
             if (!foundPath)
+            {
                 path.Clear();
+            }
+            else
+            {
+                //bread crumbs getting the path
+                for (Vertex<T> thing = end; thing != null; thing = predecessor[thing])
+                {
+                    path.Enqueue(thing);
+                }
+            }
 
             return path;
         }

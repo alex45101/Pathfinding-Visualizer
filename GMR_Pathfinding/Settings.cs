@@ -18,6 +18,7 @@ namespace GMR_Pathfinding
         public static readonly Color WallColor = Color.Gray;
         public static readonly Color VisitedColor = Color.CornflowerBlue;
         public static readonly Color ToBeVisitedColor = Color.Yellow;
+        public static readonly Color PathColor = Color.DarkOrange;
         public static readonly Color DefaultCellColor = Color.White;
     }
 }
