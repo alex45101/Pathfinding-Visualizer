@@ -152,18 +152,20 @@ namespace GMR_Pathfinding
 
         private void rightButton_Click(object sender, EventArgs e)
         {
-            UpdateVisualState(1);
-
             var thing = visualStates[currentVisualState];
             thing.SetColors();
+
+            UpdateVisualState(1);
         }
 
         private void leftButton_Click(object sender, EventArgs e)
         {
+
             UpdateVisualState(-1);
 
             var thing = visualStates[currentVisualState];
             thing.ResetColors();
+
         }
 
         private void UpdateVisualState(int increment)

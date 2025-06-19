@@ -14,15 +14,12 @@ namespace GMR_Pathfinding
         public Color BorderColor { get => BorderColor; set => pen = new Pen(value, Thickness); }
         public Color FillColor
         {
-            get => FillColor;
+            get => ((SolidBrush)brush).Color;
             set
             {
-                PrevFillColor = ((SolidBrush)brush).Color;
                 brush = new SolidBrush(value);
             }
-
         }
-        public Color PrevFillColor { get; private set; }
 
         private Pen pen;
         private Brush brush;
