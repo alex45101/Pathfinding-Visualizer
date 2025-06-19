@@ -85,6 +85,8 @@ namespace GMR_Pathfinding
             }
         }
 
+
+
         public Queue<VisualState> BreadthFirstVisual()
         {
             Queue<VisualState> visualStates = new Queue<VisualState>();
@@ -111,6 +113,37 @@ namespace GMR_Pathfinding
             path.Remove(startPoint);
             path.Remove(endPoint);
            
+            visualStates.Enqueue(new VisualPath(path));
+
+            return visualStates;
+        }
+
+        public Queue<VisualState> DepthFirstVisual()
+        {
+            Queue<VisualState> visualStates = new Queue<VisualState>();
+
+            Action<Vertex<Cell>, HashSet<Vertex<Cell>>> addToVisualState = (curr, toBeVisisted) =>
+            {
+                //no need to include start in the visual state
+                if (curr == startPoint)
+                    curr = null;
+
+                //Remove the endPoint if its in the to be visited
+                toBeVisisted.Remove(endPoint);
+
+                VisualState temp = new VisualState(curr, toBeVisisted);
+
+                visualStates.Enqueue(temp);
+            };
+
+            HashSet<Vertex<Cell>> path = graph
+                .BreadthFirstPath(startPoint, endPoint, addToVisualState)
+                .ToHashSet();
+
+            //no need to include start and end as changes in visual state
+            path.Remove(startPoint);
+            path.Remove(endPoint);
+
             visualStates.Enqueue(new VisualPath(path));
 
             return visualStates;

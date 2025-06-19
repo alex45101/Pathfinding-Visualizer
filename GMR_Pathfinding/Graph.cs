@@ -270,5 +270,76 @@ namespace GMR_Pathfinding
 
             return path;
         }
+
+        public Queue<Vertex<T>> DepthFirstPath(Vertex<T> start, Vertex<T> end)
+        {
+            Action<Vertex<T>, HashSet<Vertex<T>>> empty = (x, y) => { };
+
+            return BreadthFirstPath(start, end, empty);
+        }
+
+        public Queue<Vertex<T>> DepthFirstPath(Vertex<T> start, Vertex<T> end, Action<Vertex<T>, HashSet<Vertex<T>>> action)
+        {
+            bool foundPath = false;
+            var isVisted = vertices.ToDictionary(x => x, x => false);
+
+            Queue<Vertex<T>> path = new Queue<Vertex<T>>();
+
+            Dictionary<Vertex<T>, Vertex<T>> predecessor = new Dictionary<Vertex<T>, Vertex<T>>();
+            Stack<Vertex<T>> stack = new Stack<Vertex<T>>();
+
+            if (isVisted != null)
+            {
+                stack.Push(start);
+                predecessor.Add(start, null);
+
+                while (stack.Count > 0)
+                {
+                    Vertex<T> curr = stack.Pop();
+                    isVisted[curr] = true;
+
+                    //path has been found
+                    if (curr == end)
+                    {
+                        foundPath = true;
+
+                        break;
+                    }
+
+                    //hashset to give to visualizer
+                    HashSet<Vertex<T>> addedToQueue = new HashSet<Vertex<T>>();
+
+                    //going through all the neighbors of the curr
+                    foreach (var edge in curr.Edges.Outgoing)
+                    {
+                        if (!isVisted[edge.End] && !stack.Contains(edge.End))
+                        {
+                            stack.Push(edge.End);
+                            predecessor.Add(edge.End, curr);
+
+                            //for visualizer 
+                            addedToQueue.Add(edge.End);
+                        }
+                    }
+
+                    action(curr, addedToQueue);
+                }
+            }
+
+            if (!foundPath)
+            {
+                path.Clear();
+            }
+            else
+            {
+                //bread crumbs getting the path
+                for (Vertex<T> thing = end; thing != null; thing = predecessor[thing])
+                {
+                    path.Enqueue(thing);
+                }
+            }
+
+            return path;
+        }
     }
 }

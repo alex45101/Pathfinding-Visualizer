@@ -125,6 +125,7 @@ namespace GMR_Pathfinding
                     visualStates = grid.BreadthFirstVisual().ToArray();
                     break;
                 case SelectedAlgo.DepthFirst:
+                    visualStates = grid.DepthFirstVisual().ToArray();
                     break;
                 case SelectedAlgo.Dijkstra:
                     break;
@@ -160,12 +161,10 @@ namespace GMR_Pathfinding
 
         private void leftButton_Click(object sender, EventArgs e)
         {
-
             UpdateVisualState(-1);
 
             var thing = visualStates[currentVisualState];
             thing.ResetColors();
-
         }
 
         private void UpdateVisualState(int increment)
