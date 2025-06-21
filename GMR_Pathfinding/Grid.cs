@@ -84,27 +84,19 @@ namespace GMR_Pathfinding
                 cells[i].Value.Draw(gfx);
             }
         }
-        private Tuple<Action<Vertex<Cell>, HashSet<Vertex<Cell>>>, Queue<VisualState>> addToVisualStateWrapper()
+
+        public void ResetVisuals()
         {
-            Queue<VisualState> visualStates = new Queue<VisualState>();
-
-            Action<Vertex<Cell>, HashSet<Vertex<Cell>>> addToVisualState = (curr, toBeVisisted) =>
+            for (int i = 0; i < cells.Length; i++)
             {
-                //no need to include start in the visual state
-                if (curr == startPoint)
-                    curr = null;
-
-                //Remove the endPoint if its in the to be visited
-                toBeVisisted.Remove(endPoint);
-
-                VisualState temp = new VisualState(curr, toBeVisisted);
-
-                visualStates.Enqueue(temp);
-            };
-
-            return new Tuple<Action<Vertex<Cell>, HashSet<Vertex<Cell>>>, Queue<VisualState>>(addToVisualState, visualStates);
+                if (cells[i] != startPoint
+                    &&  cells[i] != endPoint
+                    &&  !walls.Contains(cells[i].Value))
+                {
+                    cells[i].Value.FillColor = Settings.DefaultCellColor;
+                }
+            }
         }
-
 
         public Queue<VisualState> BreadthFirstVisual()
         {
@@ -138,6 +130,27 @@ namespace GMR_Pathfinding
             visualStateWrapper.Item2.Enqueue(new VisualPath(path));
 
             return visualStateWrapper.Item2;
+        }
+
+        private Tuple<Action<Vertex<Cell>, HashSet<Vertex<Cell>>>, Queue<VisualState>> addToVisualStateWrapper()
+        {
+            Queue<VisualState> visualStates = new Queue<VisualState>();
+
+            Action<Vertex<Cell>, HashSet<Vertex<Cell>>> addToVisualState = (curr, toBeVisisted) =>
+            {
+                //no need to include start in the visual state
+                if (curr == startPoint)
+                    curr = null;
+
+                //Remove the endPoint if its in the to be visited
+                toBeVisisted.Remove(endPoint);
+
+                VisualState temp = new VisualState(curr, toBeVisisted);
+
+                visualStates.Enqueue(temp);
+            };
+
+            return new Tuple<Action<Vertex<Cell>, HashSet<Vertex<Cell>>>, Queue<VisualState>>(addToVisualState, visualStates);
         }
 
         private int GetIndex(int x, int y)

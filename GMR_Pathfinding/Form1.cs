@@ -117,23 +117,7 @@ namespace GMR_Pathfinding
         private void startButton_Click(object sender, EventArgs e)
         {
             //Start Pathfinding
-            switch (selectedAlgo)
-            {
-                case SelectedAlgo.None:
-                    break;
-                case SelectedAlgo.BreathFirst:
-                    visualStates = grid.BreadthFirstVisual().ToArray();
-                    break;
-                case SelectedAlgo.DepthFirst:
-                    visualStates = grid.DepthFirstVisual().ToArray();
-                    break;
-                case SelectedAlgo.Dijkstra:
-                    break;
-                case SelectedAlgo.A:
-                    break;
-                default:
-                    break;
-            }
+            visualStates = ChangeAlgo(selectedAlgo);
 
             if (selectedAlgo > SelectedAlgo.None && selectedAlgo <= SelectedAlgo.A)
             {
@@ -148,6 +132,12 @@ namespace GMR_Pathfinding
 
         private void pauseButton_Click(object sender, EventArgs e)
         {
+            visualTimer.Enabled = false;
+        }
+
+        private void clearButton_Click(object sender, EventArgs e)
+        {
+            ResetVisualState();
             visualTimer.Enabled = false;
         }
 
@@ -179,6 +169,39 @@ namespace GMR_Pathfinding
             {
                 currentVisualState -= increment;
             }
+        }
+        private VisualState[] ChangeAlgo(SelectedAlgo algo)
+        {
+            //when ever we change a visual state we restart
+            currentVisualState = 0;
+
+            VisualState[] temp = new VisualState[0];
+
+            switch (algo)
+            {
+                case SelectedAlgo.None:
+                    break;
+                case SelectedAlgo.BreathFirst:
+                    temp = grid.BreadthFirstVisual().ToArray();
+                    break;
+                case SelectedAlgo.DepthFirst:
+                    temp = grid.DepthFirstVisual().ToArray();
+                    break;
+                case SelectedAlgo.Dijkstra:
+                    break;
+                case SelectedAlgo.A:
+                    break;
+                default:
+                    break;
+            }
+
+            return temp;
+        }
+
+        private void ResetVisualState()
+        {
+            ChangeAlgo(SelectedAlgo.None);
+            grid.ResetVisuals();
         }
     }
 }

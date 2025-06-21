@@ -39,6 +39,7 @@
             rightButton = new Button();
             leftButton = new Button();
             label1 = new Label();
+            clearButton = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)speedTrackBar).BeginInit();
             SuspendLayout();
@@ -48,7 +49,7 @@
             pictureBox1.BorderStyle = BorderStyle.FixedSingle;
             pictureBox1.Location = new Point(12, 12);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1577, 973);
+            pictureBox1.Size = new Size(1678, 1080);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             pictureBox1.MouseDown += pictureBox1_MouseDown;
@@ -70,17 +71,17 @@
             // 
             selectedAlgoComboBox.FormattingEnabled = true;
             selectedAlgoComboBox.Items.AddRange(new object[] { "Breadth First", "Depth First", "Dijkstra", "A*" });
-            selectedAlgoComboBox.Location = new Point(12, 991);
+            selectedAlgoComboBox.Location = new Point(23, 1105);
             selectedAlgoComboBox.Name = "selectedAlgoComboBox";
-            selectedAlgoComboBox.Size = new Size(318, 40);
+            selectedAlgoComboBox.Size = new Size(335, 40);
             selectedAlgoComboBox.TabIndex = 1;
             selectedAlgoComboBox.SelectedIndexChanged += selectedAlgoComboBox_SelectedIndexChanged;
             // 
             // startButton
             // 
-            startButton.Location = new Point(1439, 991);
+            startButton.Location = new Point(1558, 1098);
             startButton.Name = "startButton";
-            startButton.Size = new Size(150, 46);
+            startButton.Size = new Size(127, 46);
             startButton.TabIndex = 2;
             startButton.Text = "Start";
             startButton.UseVisualStyleBackColor = true;
@@ -88,17 +89,17 @@
             // 
             // speedTrackBar
             // 
-            speedTrackBar.Location = new Point(336, 991);
+            speedTrackBar.Location = new Point(364, 1105);
             speedTrackBar.Minimum = 1;
             speedTrackBar.Name = "speedTrackBar";
-            speedTrackBar.Size = new Size(756, 90);
+            speedTrackBar.Size = new Size(703, 90);
             speedTrackBar.TabIndex = 3;
             speedTrackBar.Value = 1;
             speedTrackBar.Scroll += speedTrackBar_Scroll;
             // 
             // pauseButton
             // 
-            pauseButton.Location = new Point(1306, 991);
+            pauseButton.Location = new Point(1425, 1098);
             pauseButton.Name = "pauseButton";
             pauseButton.Size = new Size(127, 46);
             pauseButton.TabIndex = 4;
@@ -108,7 +109,7 @@
             // 
             // rightButton
             // 
-            rightButton.Location = new Point(1254, 991);
+            rightButton.Location = new Point(1240, 1098);
             rightButton.Name = "rightButton";
             rightButton.Size = new Size(46, 46);
             rightButton.TabIndex = 5;
@@ -118,7 +119,7 @@
             // 
             // leftButton
             // 
-            leftButton.Location = new Point(1098, 991);
+            leftButton.Location = new Point(1073, 1098);
             leftButton.Name = "leftButton";
             leftButton.Size = new Size(43, 46);
             leftButton.TabIndex = 6;
@@ -129,17 +130,28 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(1159, 999);
+            label1.Location = new Point(1140, 1105);
             label1.Name = "label1";
             label1.Size = new Size(78, 32);
             label1.TabIndex = 7;
             label1.Text = "label1";
             // 
+            // clearButton
+            // 
+            clearButton.Location = new Point(1292, 1098);
+            clearButton.Name = "clearButton";
+            clearButton.Size = new Size(127, 46);
+            clearButton.TabIndex = 8;
+            clearButton.Text = "Reset";
+            clearButton.UseVisualStyleBackColor = true;
+            clearButton.Click += clearButton_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1601, 1049);
+            ClientSize = new Size(1697, 1156);
+            Controls.Add(clearButton);
             Controls.Add(label1);
             Controls.Add(leftButton);
             Controls.Add(rightButton);
@@ -169,5 +181,6 @@
         private Button rightButton;
         private Button leftButton;
         private Label label1;
+        private Button clearButton;
     }
 }
