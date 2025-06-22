@@ -341,5 +341,43 @@ namespace GMR_Pathfinding
 
             return path;
         }
+
+        public Queue<Vertex<T>> DijkstraPath(Vertex<T> start, Vertex<T> end)
+        {
+            Action<Vertex<T>, HashSet<Vertex<T>>> empty = (x, y) => { };
+
+            return DijkstraPath(start, end, empty);
+        }
+
+        public Queue<Vertex<T>> DijkstraPath(Vertex<T> start, Vertex<T> end, Action<Vertex<T>, HashSet<Vertex<T>>> action)
+        {
+            Queue<Vertex<T>> path = new Queue<Vertex<T>>();
+
+            //cumulative distance from the start
+            Dictionary<Vertex<T>, (bool isVisisted, int distance)> cd = new Dictionary<Vertex<T>, (bool, int)>();
+            Dictionary<Vertex<T>, Vertex<T>> founder = new Dictionary<Vertex<T>, Vertex<T>>();
+
+            PriorityQueue<Vertex<T>, int> queue = new PriorityQueue<Vertex<T>, int>();
+
+            cd.Add(start, (true, 0));
+
+            queue.Enqueue(start, cd[start].distance);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+
+                foreach (var edge in current.Edges)
+                {
+                    var neighbor = edge.End;
+
+                    int tentDist = cd[current].distance + (int)edge.Weight;
+
+
+                }
+            }
+
+            return path;
+        }
     }
 }

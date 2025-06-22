@@ -90,6 +90,7 @@
             // speedTrackBar
             // 
             speedTrackBar.Location = new Point(364, 1105);
+            speedTrackBar.Maximum = 50;
             speedTrackBar.Minimum = 1;
             speedTrackBar.Name = "speedTrackBar";
             speedTrackBar.Size = new Size(703, 90);
