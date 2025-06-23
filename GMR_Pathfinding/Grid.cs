@@ -132,6 +132,23 @@ namespace GMR_Pathfinding
             return visualStateWrapper.Item2;
         }
 
+        public Queue<VisualState> DijkstraVisual()
+        {
+            var visualStateWrapper = addToVisualStateWrapper();
+
+            HashSet<Vertex<Cell>> path = graph
+                .DijkstraPath(startPoint, endPoint, visualStateWrapper.Item1)
+                .ToHashSet();
+
+            //no need to include start and end as changes in visual state
+            path.Remove(startPoint);
+            path.Remove(endPoint);
+
+            visualStateWrapper.Item2.Enqueue(new VisualPath(path));
+
+            return visualStateWrapper.Item2;
+        }
+
         private Tuple<Action<Vertex<Cell>, HashSet<Vertex<Cell>>>, Queue<VisualState>> addToVisualStateWrapper()
         {
             Queue<VisualState> visualStates = new Queue<VisualState>();

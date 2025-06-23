@@ -188,6 +188,7 @@ namespace GMR_Pathfinding
                     temp = grid.DepthFirstVisual().ToArray();
                     break;
                 case SelectedAlgo.Dijkstra:
+                    temp = grid.DijkstraVisual().ToArray();
                     break;
                 case SelectedAlgo.A:
                     break;
