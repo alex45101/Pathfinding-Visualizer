@@ -255,7 +255,7 @@ namespace GMR_Pathfinding
                 }
             }
 
-            if(foundPath)
+            if (foundPath)
             {
                 //bread crumbs getting the path
                 for (Vertex<T> curr = end; curr != null; curr = predecessor[curr])
@@ -322,7 +322,7 @@ namespace GMR_Pathfinding
                 }
             }
 
-            if(foundPath)
+            if (foundPath)
             {
                 //bread crumbs getting the path
                 for (Vertex<T> curr = end; curr != null; curr = predecessor[curr])
@@ -346,7 +346,9 @@ namespace GMR_Pathfinding
             Queue<Vertex<T>> path = new Queue<Vertex<T>>();
 
             //cumulative distance from the start
-            var cd = vertices.Select(x => (x, (isVisisted: false, distance: int.MaxValue))).ToDictionary();
+            var cd = vertices.Select(x => (x, (
+                isVisisted: false,
+                distance: int.MaxValue))).ToDictionary();
             var founder = vertices.Select(x => (x, new Vertex<T>(default))).ToDictionary();
 
             //priority queue tracking
@@ -406,7 +408,7 @@ namespace GMR_Pathfinding
             if (foundPath)
             {
                 for (Vertex<T> curr = end; curr.Value != null; curr = founder[curr])
-                { 
+                {
                     path.Enqueue(curr);
                 }
             }
@@ -414,21 +416,79 @@ namespace GMR_Pathfinding
             return path;
         }
 
-        public Queue<Vertex<T>> AStar(Vertex<T> start, Vertex<T> end)
+        public Queue<Vertex<T>> AStar(Vertex<T> start, Vertex<T> end, Func<Vertex<T>, Vertex<T>, int> heuristic)
         {
             Action<Vertex<T>, HashSet<Vertex<T>>> empty = (x, y) => { };
 
-            return Astar(start, end, empty);
+            return Astar(start, end, empty, heuristic);
         }
 
-        public Queue<Vertex<T>> Astar(Vertex<T> start, Vertex<T> end, Action<Vertex<T>, HashSet<Vertex<T>>> action)
+        public Queue<Vertex<T>> Astar(Vertex<T> start, Vertex<T> end, Action<Vertex<T>, HashSet<Vertex<T>>> action, Func<Vertex<T>, Vertex<T>, int> heuristic)
         {
             Queue<Vertex<T>> path = new Queue<Vertex<T>>();
             bool foundPath = false;
-          
+
+            var cd = vertices.Select(x => (x, (
+                isVisisted: false,
+                distance: int.MaxValue,
+                finalDistance: int.MaxValue))).ToDictionary();
+            var founder = vertices.Select(x => (x, new Vertex<T>(default))).ToDictionary();
+
+            PriorityQueue<Vertex<T>, int> queue = new PriorityQueue<Vertex<T>, int>();
+            HashSet<Vertex<T>> queuedUp = new HashSet<Vertex<T>>();
+
+            cd[start] = (false, 0, heuristic(start, end));
+            queue.Enqueue(start, cd[start].finalDistance);
+            queuedUp.Add(start);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                queuedUp.Remove(current);
+
+                //hashset to give to visualizer
+                HashSet<Vertex<T>> addedToQueue = new HashSet<Vertex<T>>();
+
+                foreach (var edge in current.Edges.Outgoing)
+                {
+                    var neighbor = edge.End;
+
+                    int tentDist = cd[current].distance + (int)edge.Weight;
+
+                    if (tentDist < cd[current].distance)
+                    {
+                        cd[current] = (false, tentDist, tentDist + heuristic(current, end));
+                        founder[neighbor] = current;
+                    }
+
+                    if (!cd[neighbor].isVisisted && !queuedUp.Contains(neighbor))
+                    {
+                        //int temp = heuristic(curr, end);
+                        queue.Enqueue(neighbor, cd[neighbor].finalDistance);
+
+                        //for visualizer
+                        addedToQueue.Add(neighbor);
+                    }
+                }
+
+                cd[current] = (true, cd[current].distance, cd[current].finalDistance);
+
+                if (current == end)
+                {
+                    foundPath = true;
+                    break;
+                }
+
+                //for visualizer
+                action(current, addedToQueue);
+            }
+
             if (foundPath)
             {
-                
+                for (Vertex<T> curr = end; curr.Value != null; curr = founder[curr])
+                {
+                    path.Enqueue(curr);
+                }
             }
 
             return path;
