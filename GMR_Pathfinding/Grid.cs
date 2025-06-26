@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,6 +25,7 @@ namespace GMR_Pathfinding
 
         Graph<Cell> graph;
         Vertex<Cell>[] cells;
+        Dictionary<Vertex<Cell>, int> cellIndexMap;
 
         public Grid(int width, int height, int cellSize, int thickness)
         {
@@ -149,6 +151,33 @@ namespace GMR_Pathfinding
             return visualStateWrapper.Item2;
         }
 
+        public Queue<VisualState> AStarVisual()
+        {
+            var visualStateWrapper = addToVisualStateWrapper();
+
+            var manhattan = (Vertex<Cell> curr, Vertex<Cell> end) => {
+                var currCord = GetCoordinate(cellIndexMap[curr]);
+                var endCord = GetCoordinate(cellIndexMap[end]);
+
+                float dx = Math.Abs(currCord.X - endCord.X);
+                float dy = Math.Abs(currCord.Y - endCord.Y);
+                
+                return (int)(1 * (dx + dy)); 
+            };
+
+            HashSet<Vertex<Cell>> path = graph
+                .AStar(startPoint, endPoint, visualStateWrapper.Item1, manhattan)
+                .ToHashSet();
+
+            //no need to include start and end as changes in visual state
+            path.Remove(startPoint);
+            path.Remove(endPoint);
+
+            visualStateWrapper.Item2.Enqueue(new VisualPath(path));
+
+            return visualStateWrapper.Item2;
+        }
+
         private Tuple<Action<Vertex<Cell>, HashSet<Vertex<Cell>>>, Queue<VisualState>> addToVisualStateWrapper()
         {
             Queue<VisualState> visualStates = new Queue<VisualState>();
@@ -175,17 +204,27 @@ namespace GMR_Pathfinding
             return y * Width + x;
         }
 
+        private (int X, int Y) GetCoordinate(int index)
+        {
+            int Y = index / Width;
+
+            return (index - Y, Y);
+        } 
+
         private void CreateCells()
         {
             graph = new Graph<Cell>();
             walls = new HashSet<Cell>();
+            cellIndexMap = new Dictionary<Vertex<Cell>, int>();
 
             //create vertices
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    graph.AddVertex(new Vertex<Cell>(new Cell(new Point(x * CellSize, y * CellSize), CellSize, Thickness)));
+                    var temp = new Vertex<Cell>(new Cell(new Point(x * CellSize, y * CellSize), CellSize, Thickness));
+                    graph.AddVertex(temp);
+                    cellIndexMap.Add(temp, GetIndex(x, y));
                 }
             }
 

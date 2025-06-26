@@ -191,6 +191,7 @@ namespace GMR_Pathfinding
                     temp = grid.DijkstraVisual().ToArray();
                     break;
                 case SelectedAlgo.A:
+                    temp = grid.AStarVisual().ToArray();
                     break;
                 default:
                     break;

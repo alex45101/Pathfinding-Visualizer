@@ -420,10 +420,10 @@ namespace GMR_Pathfinding
         {
             Action<Vertex<T>, HashSet<Vertex<T>>> empty = (x, y) => { };
 
-            return Astar(start, end, empty, heuristic);
+            return AStar(start, end, empty, heuristic);
         }
 
-        public Queue<Vertex<T>> Astar(Vertex<T> start, Vertex<T> end, Action<Vertex<T>, HashSet<Vertex<T>>> action, Func<Vertex<T>, Vertex<T>, int> heuristic)
+        public Queue<Vertex<T>> AStar(Vertex<T> start, Vertex<T> end, Action<Vertex<T>, HashSet<Vertex<T>>> action, Func<Vertex<T>, Vertex<T>, int> heuristic)
         {
             Queue<Vertex<T>> path = new Queue<Vertex<T>>();
             bool foundPath = false;
