@@ -8,7 +8,7 @@ namespace GMR_Pathfinding
 {
     public static class Settings
     {
-        public static readonly int GridSize = 15;
+        public static readonly int GridSize = 4;
         public static readonly int CellSize = 30;
         public static readonly int Thickness = 3;
 

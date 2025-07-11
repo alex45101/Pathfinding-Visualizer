@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
@@ -352,19 +353,19 @@ namespace GMR_Pathfinding
             var founder = vertices.Select(x => (x, new Vertex<T>(default))).ToDictionary();
 
             //priority queue tracking
-            PriorityQueue<Vertex<T>, int> queue = new PriorityQueue<Vertex<T>, int>();
+            PriorityQueue<Vertex<T>, int> priorityQueue = new PriorityQueue<Vertex<T>, int>();
             HashSet<Vertex<T>> queuedUp = new HashSet<Vertex<T>>();
 
             bool foundPath = false;
 
             cd[start] = (true, 0);
 
-            queue.Enqueue(start, cd[start].distance);
+            priorityQueue.Enqueue(start, cd[start].distance);
             queuedUp.Add(start);
 
-            while (queue.Count > 0)
+            while (priorityQueue.Count > 0)
             {
-                var current = queue.Dequeue();
+                var current = priorityQueue.Dequeue();
                 queuedUp.Remove(current);
 
                 //hashset to give to visualizer
@@ -384,7 +385,7 @@ namespace GMR_Pathfinding
 
                     if (!cd[neighbor].isVisisted && !queuedUp.Contains(neighbor))
                     {
-                        queue.Enqueue(neighbor, cd[neighbor].distance);
+                        priorityQueue.Enqueue(neighbor, cd[neighbor].distance);
                         queuedUp.Add(neighbor);
 
                         //for visualizer
@@ -434,16 +435,16 @@ namespace GMR_Pathfinding
                 finalDistance: int.MaxValue))).ToDictionary();
             var founder = vertices.Select(x => (x, new Vertex<T>(default))).ToDictionary();
 
-            PriorityQueue<Vertex<T>, int> queue = new PriorityQueue<Vertex<T>, int>();
+            PriorityQueue<Vertex<T>, int> priorityQueue = new PriorityQueue<Vertex<T>, int>();
             HashSet<Vertex<T>> queuedUp = new HashSet<Vertex<T>>();
 
             cd[start] = (false, 0, heuristic(start, end));
-            queue.Enqueue(start, cd[start].finalDistance);
+            priorityQueue.Enqueue(start, cd[start].finalDistance);
             queuedUp.Add(start);
 
-            while (queue.Count > 0)
+            while (priorityQueue.Count > 0)
             {
-                var current = queue.Dequeue();
+                var current = priorityQueue.Dequeue();
                 queuedUp.Remove(current);
 
                 //hashset to give to visualizer
@@ -453,21 +454,24 @@ namespace GMR_Pathfinding
                 {
                     var neighbor = edge.End;
 
-                    int tentDist = cd[current].distance + (int)edge.Weight;
-
-                    if (tentDist < cd[current].distance)
+                    if (!cd[neighbor].isVisisted)
                     {
-                        cd[current] = (false, tentDist, tentDist + heuristic(current, end));
-                        founder[neighbor] = current;
-                    }
+                        int tentDist = cd[current].distance + (int)edge.Weight;
 
-                    if (!cd[neighbor].isVisisted && !queuedUp.Contains(neighbor))
-                    {
-                        //int temp = heuristic(curr, end);
-                        queue.Enqueue(neighbor, cd[neighbor].finalDistance);
+                        if (tentDist < cd[current].distance)
+                        {
+                            cd[neighbor] = (false, tentDist, tentDist + heuristic(current, end));
+                            founder[neighbor] = current;
+                        }
 
-                        //for visualizer
-                        addedToQueue.Add(neighbor);
+                        if (!queuedUp.Contains(neighbor))
+                        {
+                            //int temp = heuristic(curr, end);
+                            priorityQueue.Enqueue(neighbor, cd[neighbor].finalDistance);
+
+                            //for visualizer
+                            addedToQueue.Add(neighbor);
+                        }
                     }
                 }
 

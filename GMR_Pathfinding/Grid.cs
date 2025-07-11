@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -68,7 +69,7 @@ namespace GMR_Pathfinding
             }
 
             //debug
-            Console.WriteLine(moveState.ToString());
+            Debug.WriteLine(moveState.ToString());
             //debug
 
             if (moveState != CellMoveState.None)
@@ -84,6 +85,9 @@ namespace GMR_Pathfinding
             for (int i = 0; i < cells.Length; i++)
             {
                 cells[i].Value.Draw(gfx);
+
+                var thing = GetCoordinate(i);
+                gfx.DrawString($"X: {thing.X}, Y: {thing.Y}", new Font("Arial", 2.5f), Brushes.LightGray, cells[i].Value.Position.X + cells[i].Value.Thickness, cells[i].Value.Position.Y + cells[i].Value.Thickness);
             }
         }
 
@@ -207,8 +211,9 @@ namespace GMR_Pathfinding
         private (int X, int Y) GetCoordinate(int index)
         {
             int Y = index / Width;
+            int X = index % Width;
 
-            return (index - Y, Y);
+            return (X, Y);
         } 
 
         private void CreateCells()
