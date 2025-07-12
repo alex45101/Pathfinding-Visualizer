@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GMR_Pathfinding
 {
-    enum CellMoveState
+    public enum CellMoveState
     {
         None,
         Start,
@@ -15,12 +15,19 @@ namespace GMR_Pathfinding
         NoneWall
     }
 
-    enum SelectedAlgo
+    public enum SelectedAlgo
     {
         None,
         BreathFirst,
         DepthFirst,
         Dijkstra,
         A
+    }
+
+    public enum SelectedHeuristic
+    { 
+        None,
+        Manhattan,
+        Euclidean
     }
 }

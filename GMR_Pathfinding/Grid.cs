@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace GMR_Pathfinding
 {
@@ -36,7 +38,7 @@ namespace GMR_Pathfinding
             Thickness = thickness;
 
             CreateCells();
-        }     
+        }
 
         public void Update(bool mouseDown, bool prevMouseDown, Point mousePos, Color selectedColor, Size imageSize)
         {
@@ -63,7 +65,7 @@ namespace GMR_Pathfinding
                     moveState = CellMoveState.NoneWall;
                 }
             }
-            else if(!mouseDown && prevMouseDown)
+            else if (!mouseDown && prevMouseDown)
             {
                 moveState = CellMoveState.None;
             }
@@ -86,8 +88,8 @@ namespace GMR_Pathfinding
             {
                 cells[i].Value.Draw(gfx);
 
-                var thing = GetCoordinate(i);
-                gfx.DrawString($"X: {thing.X}, Y: {thing.Y}", new Font("Arial", 2.5f), Brushes.LightGray, cells[i].Value.Position.X + cells[i].Value.Thickness, cells[i].Value.Position.Y + cells[i].Value.Thickness);
+                //var thing = GetCoordinate(i);
+                //gfx.DrawString($"X: {thing.X}, Y: {thing.Y}", new Font("Arial", 2.5f), Brushes.LightGray, cells[i].Value.Position.X + cells[i].Value.Thickness, cells[i].Value.Position.Y + cells[i].Value.Thickness);
             }
         }
 
@@ -96,8 +98,8 @@ namespace GMR_Pathfinding
             for (int i = 0; i < cells.Length; i++)
             {
                 if (cells[i] != startPoint
-                    &&  cells[i] != endPoint
-                    &&  !walls.Contains(cells[i].Value))
+                    && cells[i] != endPoint
+                    && !walls.Contains(cells[i].Value))
                 {
                     cells[i].Value.FillColor = Settings.DefaultCellColor;
                 }
@@ -115,12 +117,12 @@ namespace GMR_Pathfinding
             //no need to include start and end as changes in visual state
             path.Remove(startPoint);
             path.Remove(endPoint);
-           
+
             visualStateWrapper.Item2.Enqueue(new VisualPath(path));
 
             return visualStateWrapper.Item2;
         }
-        
+
         public Queue<VisualState> DepthFirstVisual()
         {
             var visualStateWrapper = addToVisualStateWrapper();
@@ -157,20 +159,18 @@ namespace GMR_Pathfinding
 
         public Queue<VisualState> AStarVisual()
         {
+            return AStarVisual(SelectedHeuristic.Manhattan);
+        }
+
+        public Queue<VisualState> AStarVisual(SelectedHeuristic selectedHeuristic)
+
+        {
             var visualStateWrapper = addToVisualStateWrapper();
 
-            var manhattan = (Vertex<Cell> curr, Vertex<Cell> end) => {
-                var currCord = GetCoordinate(cellIndexMap[curr]);
-                var endCord = GetCoordinate(cellIndexMap[end]);
-
-                float dx = Math.Abs(currCord.X - endCord.X);
-                float dy = Math.Abs(currCord.Y - endCord.Y);
-                
-                return (int)(1 * (dx + dy)); 
-            };
+            var heuristic = GetHeurisitic(selectedHeuristic);
 
             HashSet<Vertex<Cell>> path = graph
-                .AStar(startPoint, endPoint, visualStateWrapper.Item1, manhattan)
+                .AStar(startPoint, endPoint, visualStateWrapper.Item1, heuristic)
                 .ToHashSet();
 
             //no need to include start and end as changes in visual state
@@ -180,6 +180,40 @@ namespace GMR_Pathfinding
             visualStateWrapper.Item2.Enqueue(new VisualPath(path));
 
             return visualStateWrapper.Item2;
+        }
+
+        private Func<Vertex<Cell>, Vertex<Cell>, float> GetHeurisitic(SelectedHeuristic heuristic)
+        {
+            switch (heuristic)
+            {
+                case SelectedHeuristic.Manhattan:
+
+                    return (Vertex<Cell> curr, Vertex<Cell> end) =>
+                    {
+                        var currCord = GetCoordinate(cellIndexMap[curr]);
+                        var endCord = GetCoordinate(cellIndexMap[end]);
+
+                        float dx = Math.Abs(currCord.X - endCord.X);
+                        float dy = Math.Abs(currCord.Y - endCord.Y);
+
+                        return 1 * (dx + dy);
+                    };
+
+                case SelectedHeuristic.Euclidean:
+
+                    return (Vertex<Cell> curr, Vertex<Cell> end) =>
+                    {
+                        var currCord = GetCoordinate(cellIndexMap[curr]);
+                        var endCord = GetCoordinate(cellIndexMap[end]);
+
+                        float dx = Math.Abs(currCord.X - endCord.X);
+                        float dy = Math.Abs(currCord.Y - endCord.Y);
+
+                        return 1 * (float)Math.Sqrt(dx * dx + dy * dy);
+                    };
+                default:
+                    throw new Exception("Invalid Heuristic Selected!");
+            }
         }
 
         private Tuple<Action<Vertex<Cell>, HashSet<Vertex<Cell>>>, Queue<VisualState>> addToVisualStateWrapper()
@@ -214,7 +248,7 @@ namespace GMR_Pathfinding
             int X = index % Width;
 
             return (X, Y);
-        } 
+        }
 
         private void CreateCells()
         {
@@ -306,7 +340,7 @@ namespace GMR_Pathfinding
             if (y < Height - 1)
             {
                 graph.AddEdge(cells[index], cells[(y + 1) * Width + x], 1);
-                graph.AddEdge(cells[(y + 1) * Width + x], cells[index], 1);                
+                graph.AddEdge(cells[(y + 1) * Width + x], cells[index], 1);
             }
         }
 
