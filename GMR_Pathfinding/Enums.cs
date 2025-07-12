@@ -21,7 +21,8 @@ namespace GMR_Pathfinding
         BreathFirst,
         DepthFirst,
         Dijkstra,
-        A
+        AStarManhattan,
+        AStarEuclidean
     }
 
     public enum SelectedHeuristic

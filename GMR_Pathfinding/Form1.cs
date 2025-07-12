@@ -119,7 +119,7 @@ namespace GMR_Pathfinding
             //Start Pathfinding
             visualStates = ChangeAlgo(selectedAlgo);
 
-            if (selectedAlgo > SelectedAlgo.None && selectedAlgo <= SelectedAlgo.A)
+            if (selectedAlgo > SelectedAlgo.None && selectedAlgo <= SelectedAlgo.AStarEuclidean)
             {
                 visualTimer.Enabled = true;
             }
@@ -190,8 +190,11 @@ namespace GMR_Pathfinding
                 case SelectedAlgo.Dijkstra:
                     temp = grid.DijkstraVisual().ToArray();
                     break;
-                case SelectedAlgo.A:
-                    temp = grid.AStarVisual().ToArray();
+                case SelectedAlgo.AStarManhattan:
+                    temp = grid.AStarVisual(SelectedHeuristic.Manhattan).ToArray();
+                    break;
+                case SelectedAlgo.AStarEuclidean:
+                    temp = grid.AStarVisual(SelectedHeuristic.Euclidean).ToArray();
                     break;
                 default:
                     break;
