@@ -374,31 +374,33 @@ namespace GMR_Pathfinding
             }
         }
 
-        private void SetStartPoint(int index)
+        private void SetPoint(int index, ref Vertex<Cell> point, Color color)
         {
-            if (endPoint != cells[index] && !walls.Contains(cells[index].Value))
+            if (!walls.Contains(cells[index].Value))
             {
-                if (startPoint != null)
+                if (point != null)
                 {
-                    startPoint.Value.FillColor = Color.White;
+                    point.Value.FillColor = Color.White;
                 }
 
-                startPoint = cells[index];
-                startPoint.Value.FillColor = Settings.StartColor;
+                point = cells[index];
+                point.Value.FillColor = color;
+            }
+        }
+
+        private void SetStartPoint(int index)
+        {
+            if (endPoint != cells[index])
+            {
+               SetPoint(index, ref startPoint, Settings.StartColor);
             }
         }
 
         private void SetEndPoint(int index)
         {
-            if (startPoint != cells[index] && !walls.Contains(cells[index].Value))
+            if (startPoint != cells[index])
             {
-                if (endPoint != null)
-                {
-                    endPoint.Value.FillColor = Color.White;
-                }
-
-                endPoint = cells[index];
-                endPoint.Value.FillColor = Settings.EndColor;
+                SetPoint(index, ref endPoint, Settings.EndColor);
             }
         }
 
