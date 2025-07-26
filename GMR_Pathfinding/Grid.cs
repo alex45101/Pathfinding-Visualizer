@@ -17,8 +17,6 @@ namespace GMR_Pathfinding
         public int CellSize { get; private set; }
         public int Thickness { get; private set; }
 
-        //TODO fix
-        //need to maintain walls too
         Vertex<Cell> startPoint;
         Vertex<Cell> endPoint;
         HashSet<Cell> walls;
