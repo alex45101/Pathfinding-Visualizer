@@ -14,6 +14,9 @@ namespace GMR_Pathfinding
 
         public static readonly int VisualTimerDefault = 500;
 
+        public static readonly Size ImageSize = new Size(GridSize * CellSize + Thickness * 2,
+                                                         GridSize * CellSize + Thickness * 2);
+        
         public static readonly Color StartColor = Color.Green;
         public static readonly Color EndColor = Color.Red;
         public static readonly Color NoneWallColor = Color.White;
@@ -22,5 +25,6 @@ namespace GMR_Pathfinding
         public static readonly Color ToBeVisitedColor = Color.Yellow;
         public static readonly Color PathColor = Color.DarkOrange;
         public static readonly Color DefaultCellColor = Color.White;
+        
     }
 }
