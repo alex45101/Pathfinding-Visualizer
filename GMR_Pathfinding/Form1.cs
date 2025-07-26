@@ -89,11 +89,6 @@ namespace GMR_Pathfinding
             mousePos.Y = (int)(e.Y * ((float)bitmap.Size.Height / pictureBox1.Size.Height));
         }
 
-        private void pictureBox1_MouseLeave(object sender, EventArgs e)
-        {
-
-        }
-
         private void visualTimer_Tick(object sender, EventArgs e)
         {
             if (currentVisualState < visualStates.Length)
