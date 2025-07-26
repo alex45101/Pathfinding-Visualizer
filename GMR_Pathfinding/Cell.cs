@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GMR_Pathfinding
 {
-    public class Cell : IDrawable, IComparable<Cell>
+    public class Cell : IDrawable, IEqualityComparer<Cell>
     {
         public Point Position { get; set; }
         public int Size { get; set; }
@@ -40,36 +41,20 @@ namespace GMR_Pathfinding
             gfx.DrawRectangle(pen, Position.X + Thickness, Position.Y + Thickness, Size, Size);
         }
 
-        public int CompareTo(Cell? other)
+        public bool Equals(Cell? x, Cell? y)
         {
-            Point temp = other == null ? new Point(0, 0) : other.Position;
+            if(x == null)
+                throw new ArgumentNullException(nameof(x));
 
-            if (Position.X == temp.X && Position.Y == temp.Y)
-            {
-                return 0;
-            }
-            else if (Position.X > temp.X) // current X bigger then other
-            {
-                if (Position.Y >= temp.Y) // bigger Y means bigger
-                {
-                    return 1;
-                }
-                else // smaller Y means smaller
-                {
-                    return -1;
-                }
-            }
-            else
-            {
-                if (Position.Y >= temp.Y) // bigger Y means bigger
-                {
-                    return 1;
-                }
-                else // smaller Y means smaller
-                {
-                    return -1;
-                }
-            }
+            if (y == null)
+                throw new ArgumentNullException(nameof(y));
+
+            return x.Equals(y);
+        }
+
+        public int GetHashCode([DisallowNull] Cell obj)
+        {
+            return obj.GetHashCode();
         }
     }
 }
