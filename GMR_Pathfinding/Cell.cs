@@ -12,7 +12,11 @@ namespace GMR_Pathfinding
         public Point Position { get; set; }
         public int Size { get; set; }
         public int Thickness { get; set; }
-        public Color BorderColor { get => BorderColor; set => pen = new Pen(value, Thickness); }
+        public Color BorderColor 
+        { 
+            get => pen.Color; 
+            set => pen = new Pen(value, Thickness); 
+        }
         public Color FillColor
         {
             get => ((SolidBrush)brush).Color;
