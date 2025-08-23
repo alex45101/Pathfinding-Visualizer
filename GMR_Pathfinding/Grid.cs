@@ -17,8 +17,6 @@ namespace GMR_Pathfinding
         public int CellSize { get; private set; }
         public int Thickness { get; private set; }
 
-        //TODO fix
-        //need to maintain walls too
         Vertex<Cell> startPoint;
         Vertex<Cell> endPoint;
         HashSet<Cell> walls;
@@ -28,7 +26,6 @@ namespace GMR_Pathfinding
 
         Graph<Cell> graph;
         Vertex<Cell>[] cells;
-        Dictionary<Vertex<Cell>, int> cellIndexMap;
 
         public Grid(int width, int height, int cellSize, int thickness)
         {
@@ -37,30 +34,30 @@ namespace GMR_Pathfinding
             CellSize = cellSize;
             Thickness = thickness;
 
-            CreateCells();
+            SetUpCells();
         }
 
-        public void Update(bool mouseDown, bool prevMouseDown, Point mousePos, Color selectedColor, Size imageSize)
+        public void Update(bool mouseDown, bool prevMouseDown, Point mousePos, Color selectedColor)
         {
             if (prevMoveState == CellMoveState.None && mouseDown && !prevMouseDown)
             {
                 //moving start point
-                if (selectedColor.R == Settings.StartColor.R && selectedColor.G == Settings.StartColor.G && selectedColor.B == Settings.StartColor.B)
+                if (selectedColor.RGBEquality(Settings.StartColor))
                 {
                     moveState = CellMoveState.Start;
                 }
                 //moving end point
-                else if (selectedColor.R == Settings.EndColor.R && selectedColor.G == Settings.EndColor.G && selectedColor.B == Settings.EndColor.B)
+                else if (selectedColor.RGBEquality(Settings.EndColor))
                 {
                     moveState = CellMoveState.End;
                 }
                 //walls
-                else if (prevMoveState != CellMoveState.NoneWall && selectedColor.R == Settings.NoneWallColor.R && selectedColor.G == Settings.NoneWallColor.G && selectedColor.B == Settings.NoneWallColor.B)
+                else if (prevMoveState != CellMoveState.NoneWall && selectedColor.RGBEquality(Settings.NoneWallColor))
                 {
                     moveState = CellMoveState.Wall;
                 }
                 //nonewalls
-                else if (prevMoveState != CellMoveState.Wall && selectedColor.R == Settings.WallColor.R && selectedColor.G == Settings.WallColor.G && selectedColor.B == Settings.WallColor.B)
+                else if (prevMoveState != CellMoveState.Wall && selectedColor.RGBEquality(Settings.WallColor))
                 {
                     moveState = CellMoveState.NoneWall;
                 }
@@ -76,7 +73,7 @@ namespace GMR_Pathfinding
 
             if (moveState != CellMoveState.None)
             {
-                MouseStateAction(mousePos, imageSize);
+                MouseStateAction(mousePos);
             }
 
             prevMoveState = moveState;
@@ -87,9 +84,6 @@ namespace GMR_Pathfinding
             for (int i = 0; i < cells.Length; i++)
             {
                 cells[i].Value.Draw(gfx);
-
-                //var thing = GetCoordinate(i);
-                //gfx.DrawString($"X: {thing.X}, Y: {thing.Y}", new Font("Arial", 2.5f), Brushes.LightGray, cells[i].Value.Position.X + cells[i].Value.Thickness, cells[i].Value.Position.Y + cells[i].Value.Thickness);
             }
         }
 
@@ -182,41 +176,64 @@ namespace GMR_Pathfinding
             return visualStateWrapper.Item2;
         }
 
+        private Point ScaleImageCord(Vertex<Cell> vertex)
+        {
+            return ScaleImageCord(vertex.Value.Position);
+        }
+
+        private Point ScaleImageCord(Point point)
+        {
+            return new Point(
+                        (int)(point.X * (float)Settings.GridSize / Settings.ImageSize.Width),
+                        (int)(point.Y * (float)Settings.GridSize / Settings.ImageSize.Height)
+                       );
+        }
+
         private Func<Vertex<Cell>, Vertex<Cell>, float> GetHeurisitic(SelectedHeuristic heuristic)
         {
+            float d = 1.0f;
+
             switch (heuristic)
             {
                 case SelectedHeuristic.Manhattan:
 
                     return (Vertex<Cell> curr, Vertex<Cell> end) =>
                     {
-                        var currCord = GetCoordinate(cellIndexMap[curr]);
-                        var endCord = GetCoordinate(cellIndexMap[end]);
+                        var currCord = ScaleImageCord(curr);
+                        var endCord = ScaleImageCord(end);
+
+
+                        //var currCord = GetCoordinate(cellIndexMap[curr]);
+                        //var endCord = GetCoordinate(cellIndexMap[end]);
 
                         float dx = Math.Abs(currCord.X - endCord.X);
                         float dy = Math.Abs(currCord.Y - endCord.Y);
 
-                        return 1 * (dx + dy);
+                        return d * (dx + dy);
                     };
 
                 case SelectedHeuristic.Euclidean:
 
                     return (Vertex<Cell> curr, Vertex<Cell> end) =>
                     {
-                        var currCord = GetCoordinate(cellIndexMap[curr]);
-                        var endCord = GetCoordinate(cellIndexMap[end]);
+                        var currCord = ScaleImageCord(curr);
+                        var endCord = ScaleImageCord(end);
+
+
+                        //var currCord = GetCoordinate(cellIndexMap[curr]);
+                        //var endCord = GetCoordinate(cellIndexMap[end]);
 
                         float dx = Math.Abs(currCord.X - endCord.X);
                         float dy = Math.Abs(currCord.Y - endCord.Y);
 
-                        return 1 * (float)Math.Sqrt(dx * dx + dy * dy);
+                        return d * (float)Math.Sqrt(dx * dx + dy * dy);
                     };
                 default:
                     throw new Exception("Invalid Heuristic Selected!");
             }
         }
 
-        private Tuple<Action<Vertex<Cell>, HashSet<Vertex<Cell>>>, Queue<VisualState>> addToVisualStateWrapper()
+        private (Action<Vertex<Cell>, HashSet<Vertex<Cell>>>, Queue<VisualState>) addToVisualStateWrapper()
         {
             Queue<VisualState> visualStates = new Queue<VisualState>();
 
@@ -234,7 +251,7 @@ namespace GMR_Pathfinding
                 visualStates.Enqueue(temp);
             };
 
-            return new Tuple<Action<Vertex<Cell>, HashSet<Vertex<Cell>>>, Queue<VisualState>>(addToVisualState, visualStates);
+            return (addToVisualState, visualStates);
         }
 
         private int GetIndex(int x, int y)
@@ -250,11 +267,10 @@ namespace GMR_Pathfinding
             return (X, Y);
         }
 
-        private void CreateCells()
+        private void SetUpCells()
         {
             graph = new Graph<Cell>();
             walls = new HashSet<Cell>();
-            cellIndexMap = new Dictionary<Vertex<Cell>, int>();
 
             //create vertices
             for (int y = 0; y < Height; y++)
@@ -263,7 +279,6 @@ namespace GMR_Pathfinding
                 {
                     var temp = new Vertex<Cell>(new Cell(new Point(x * CellSize, y * CellSize), CellSize, Thickness));
                     graph.AddVertex(temp);
-                    cellIndexMap.Add(temp, GetIndex(x, y));
                 }
             }
 
@@ -284,12 +299,9 @@ namespace GMR_Pathfinding
             SetEndPoint(cells.Length - 1);
         }
 
-        private void MouseStateAction(Point mousePos, Size imageSize)
+        private void MouseStateAction(Point mousePos)
         {
-            Point cellPoint = new Point(
-                        (int)(mousePos.X * (float)Settings.GridSize / imageSize.Width),
-                        (int)(mousePos.Y * (float)Settings.GridSize / imageSize.Height)
-                        );
+            Point cellPoint = ScaleImageCord(mousePos); 
 
             int index = GetIndex(cellPoint.X, cellPoint.Y);
 
@@ -374,31 +386,33 @@ namespace GMR_Pathfinding
             }
         }
 
-        private void SetStartPoint(int index)
+        private void SetPoint(int index, ref Vertex<Cell> point, Color color)
         {
-            if (endPoint != cells[index] && !walls.Contains(cells[index].Value))
+            if (!walls.Contains(cells[index].Value))
             {
-                if (startPoint != null)
+                if (point != null)
                 {
-                    startPoint.Value.FillColor = Color.White;
+                    point.Value.FillColor = Color.White;
                 }
 
-                startPoint = cells[index];
-                startPoint.Value.FillColor = Settings.StartColor;
+                point = cells[index];
+                point.Value.FillColor = color;
+            }
+        }
+
+        private void SetStartPoint(int index)
+        {
+            if (endPoint != cells[index])
+            {
+                SetPoint(index, ref startPoint, Settings.StartColor);
             }
         }
 
         private void SetEndPoint(int index)
         {
-            if (startPoint != cells[index] && !walls.Contains(cells[index].Value))
+            if (startPoint != cells[index])
             {
-                if (endPoint != null)
-                {
-                    endPoint.Value.FillColor = Color.White;
-                }
-
-                endPoint = cells[index];
-                endPoint.Value.FillColor = Settings.EndColor;
+                SetPoint(index, ref endPoint, Settings.EndColor);
             }
         }
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GMR_Pathfinding
 {
-    public class Edge<T> where T : IComparable<T>
+    public class Edge<T> where T : IEqualityComparer<T>
     {
         public Vertex<T> Start { get; set; }
         public Vertex<T> End { get; set; }
@@ -23,7 +23,7 @@ namespace GMR_Pathfinding
         }
     }
 
-    public class EdgeCollection<T> : IEnumerable<Edge<T>> where T : IComparable<T>
+    public class EdgeCollection<T> : IEnumerable<Edge<T>> where T : IEqualityComparer<T>
     {
         public HashSet<Edge<T>> Incoming { get; } = [];
         public HashSet<Edge<T>> Outgoing { get; } = [];
@@ -101,7 +101,7 @@ namespace GMR_Pathfinding
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
-    public class Vertex<T> where T : IComparable<T>
+    public class Vertex<T> where T : IEqualityComparer<T>
     {
         public T Value { get; set; }
         public EdgeCollection<T> Edges { get; } = [];
@@ -122,7 +122,7 @@ namespace GMR_Pathfinding
         }
     }
 
-    public class Graph<T> where T : IComparable<T>
+    public class Graph<T> where T : IEqualityComparer<T>
     {
         private HashSet<Vertex<T>> vertices;
 
@@ -187,7 +187,7 @@ namespace GMR_Pathfinding
 
         public Vertex<T>? Search(T value)
         {
-            return vertices.FirstOrDefault(x => x.Value.CompareTo(value) == 0);
+            return vertices.FirstOrDefault(x => x.Equals(value));
         }
 
         public Edge<T>? GetEdge(Vertex<T> a, Vertex<T> b)

@@ -40,7 +40,7 @@ namespace GMR_Pathfinding
             //set picturebox and graphics
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 
-            bitmap = new Bitmap(Settings.GridSize * Settings.CellSize + Settings.Thickness * 2, Settings.GridSize * Settings.CellSize + Settings.Thickness * 2);
+            bitmap = new Bitmap(Settings.ImageSize.Width, Settings.ImageSize.Height);
             gfx = Graphics.FromImage(bitmap);
 
             grid = new Grid(Settings.GridSize, Settings.GridSize, Settings.CellSize, Settings.Thickness);
@@ -53,7 +53,7 @@ namespace GMR_Pathfinding
             //update
             this.Text = $"Clicks: {tempClicks} X:{mousePos.X}, Y:{mousePos.Y}, Color: {selectedColor}";
 
-            grid.Update(mouseDown, prevMouseDown, mousePos, selectedColor, bitmap.Size);
+            grid.Update(mouseDown, prevMouseDown, mousePos, selectedColor);
 
             //draw
             grid.Draw(gfx);
@@ -87,11 +87,6 @@ namespace GMR_Pathfinding
         {
             mousePos.X = (int)(e.X * ((float)bitmap.Size.Width / pictureBox1.Size.Width));
             mousePos.Y = (int)(e.Y * ((float)bitmap.Size.Height / pictureBox1.Size.Height));
-        }
-
-        private void pictureBox1_MouseLeave(object sender, EventArgs e)
-        {
-
         }
 
         private void visualTimer_Tick(object sender, EventArgs e)
