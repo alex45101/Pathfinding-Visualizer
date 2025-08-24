@@ -26,9 +26,7 @@ namespace GMR_Pathfinding
         int currentVisualState = 0;
 
         private void Form1_Load(object sender, EventArgs e)
-        {
-            var thing = Environment.GetEnvironmentVariable("Test");
-
+        {            
             //set combo box
             selectedAlgoComboBox.Items.Clear();
 
