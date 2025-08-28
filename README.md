@@ -1,4 +1,4 @@
-# GMR Pathfinding
+# Pathfinding
 
 GMR Pathfinding is a Windows Forms application written in C# that demonstrates pathfinding algorithms on a grid-based map. The project visualizes how different algorithms traverse a grid to find the shortest path between two points, making it a useful educational tool for understanding pathfinding concepts.
 
